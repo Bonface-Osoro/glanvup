@@ -13,16 +13,17 @@ Example Results
 
 ### Figure 1 Spatial distribution of vulnerable Kenyan population due to riverine flooding.
 <p align="center">
-  <img src="/docs/pop_flood_maps.tiff" />
+  <img src="/docs/pop_flood_maps.png" />
 </p>
 
 ### Figure 2 Average mean area and inudation depth of riverine flooding for 8 Kenyan regions
 <p align="center">
-  <img src="/docs/flood_plots.tiff" />
+  <img src="/docs/flood_plots.png" />
 </p>
 
 Required Data
 ==============
 
-[1]	“World Resources Institute | Making Big Ideas Happen.” http://wri-projects.s3.amazonaws.com/AqueductFloodTool/download/v2/index.html (accessed May 08, 2023).
+[1]	“World Resources Institute | Making Big Ideas Happen.” http://wri-projects.s3.amazonaws.com/AqueductFloodTool/  download/v2/index.html (accessed May 08, 2023).
+
 [2]	“Open Spatial Demographic Data and Research,” WorldPop. https://www.worldpop.org/ (accessed May 08, 2023).
