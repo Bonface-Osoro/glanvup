@@ -27,3 +27,5 @@ Required Data
 [1]	“World Resources Institute | Making Big Ideas Happen.” http://wri-projects.s3.amazonaws.com/AqueductFloodTool/  download/v2/index.html (accessed May 08, 2023).
 
 [2]	“Open Spatial Demographic Data and Research,” WorldPop. https://www.worldpop.org/ (accessed May 08, 2023).
+
+[3] Country metadafile. Contained in `/data/countries.csv`
