@@ -1,4 +1,4 @@
-# Candidacy
+# Global Assessment of Natural Hazards towards Vulnerable and Unconnected Population (glanhavup)
 This repository is for answering question 2 of the candidacy exams.
 
 Here is the question.
