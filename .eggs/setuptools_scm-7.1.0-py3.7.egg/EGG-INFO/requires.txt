@@ -1,0 +1,12 @@
+packaging>=20.0
+setuptools
+typing-extensions
+tomli>=1.0.0
+importlib-metadata
+
+[test]
+pytest>=6.2
+virtualenv>20
+
+[toml]
+setuptools>=42
