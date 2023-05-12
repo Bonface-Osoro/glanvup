@@ -263,6 +263,67 @@ tiff(
 print(comb_floods)
 dev.off()
 
+#### DATA TYPES ####
+unconst <-
+  readPNG(file.path(folder, "pic", "unconstrained.png"))
+
+const <-
+  readPNG(file.path(folder, "pic", "constrained.png"))
+
+### Unconstrained ###
+unconstrained <- ggplot() + background_image(unconst) +
+  theme(plot.margin = margin(
+    t = 0,
+    l = 0,
+    r = 0,
+    b = 0,
+    unit = "cm"
+  )) 
+
+### Constrained ###
+constrained <- ggplot() + background_image(const) +
+  theme(plot.margin = margin(
+    t = 0,
+    l = 0,
+    r = 0,
+    b = 0,
+    unit = "cm"
+  )) 
+
+### Combine the two maps ###
+comb_constrained <- ggarrange(
+  unconstrained,
+  constrained,
+  ncol = 2,
+  common.legend = T,
+  legend = "bottom",
+  labels = c("a", "b")
+)
+
+###. save the combined image ###
+path = file.path(folder, "figures", "constrained.tiff")
+dir.create(file.path(folder), showWarnings = FALSE)
+tiff(
+  path,
+  units = "in",
+  width = 6,
+  height = 3.5,
+  res = 300
+)
+print(comb_constrained)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
