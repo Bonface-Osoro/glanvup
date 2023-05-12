@@ -65,8 +65,8 @@ class GlobalPopulation:
     
         return output
 
-if __name__ == "__main__":  
+#if __name__ == "__main__":  
         
-    x = GlobalPopulation()
-    y = x.country_directory()
-    print(y)
+    #x = GlobalPopulation()
+    #y = x.country_directory()
+    #print(y)
