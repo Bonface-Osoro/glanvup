@@ -10,6 +10,7 @@ import os
 import numpy as np
 import pandas as pd
 
+
 class GlobalPopulation:
     """
     This class calculates population for every country.
@@ -64,9 +65,3 @@ class GlobalPopulation:
             print('processing {}'.format(country_name))      
     
         return output
-
-#if __name__ == "__main__":  
-        
-    #x = GlobalPopulation()
-    #y = x.country_directory()
-    #print(y)

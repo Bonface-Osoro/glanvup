@@ -59,7 +59,7 @@ setup.py
 .eggs/tomli-2.0.1-py3.7.egg/tomli/_types.py
 .eggs/tomli-2.0.1-py3.7.egg/tomli/py.typed
 data/.DS_Store
-data/countries.csv
+dist/glanvup-0.1.dev15+gb242531.d20230512-py3.7.egg
 docs/.DS_Store
 docs/flood_plots.png
 docs/pop_flood_maps.png
@@ -69,6 +69,7 @@ scripts/model_run.py
 scripts/riverine_flooding.ipynb
 scripts/script_config.ini
 src/.DS_Store
+src/glanvup/__init__.py
 src/glanvup/globpop.py
 src/glanvup.egg-info/PKG-INFO
 src/glanvup.egg-info/SOURCES.txt
@@ -76,6 +77,7 @@ src/glanvup.egg-info/dependency_links.txt
 src/glanvup.egg-info/not-zip-safe
 src/glanvup.egg-info/requires.txt
 src/glanvup.egg-info/top_level.txt
+src/glanvup/__pycache__/globpop.cpython-37.pyc
 vis/.DS_Store
 vis/visualization.R
 vis/figures/constrained.tiff
