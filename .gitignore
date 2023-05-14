@@ -129,6 +129,5 @@ dmypy.json
 .pyre/
 
 # Exclusions
-vis/*
-data/*
-figures/*
+**/data/*/
+**/vis/*/
