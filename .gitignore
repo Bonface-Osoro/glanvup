@@ -128,25 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-data/processed/*
-data/raw/settlement_layer/*
-data/raw/gadm36_levels_shp/*
-data/raw/hazard_scenarios/*
-data/test/
-
-results/*
-vis/results_v1/*
-vis/results_v2/*
-vis/results_v3/*
-vis/results_v4/*
-vis/results_v5/*
-vis/figures/*
-vis/results/*
-data/raw/*
-vis/wb_maps/*
-vis/data/*
-vis/regional_results/*
-validation/*
-
-glanvup/*
-personal_access_token.txt
+# Exclusions
+vis/*/* 
+data/*
+figures/*
+sankey/*
