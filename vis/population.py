@@ -73,8 +73,3 @@ data = pd.read_csv(path_2)
 
 country_boundaries = gpd.read_file(path_in)
 plot_population(country_boundaries, data, 'GID_1', 'COD')
-
-
-
-
-
