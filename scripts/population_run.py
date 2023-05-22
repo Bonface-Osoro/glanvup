@@ -20,7 +20,7 @@ path = os.path.join(DATA_RAW, 'countries.csv')
 pop_tif_loc = os.path.join(DATA_RAW, 'WorldPop', 'ppp_2020_1km_Aggregated.tif')
 
 ## create country folder
-global_population = GlobalPopulation(path, 'BGD', 'GID_0', pop_tif_loc)
+global_population = GlobalPopulation(path, 'RWA', 'GID_1', pop_tif_loc)
 g = global_population.country_directory()
 
 # create a country boundary
@@ -29,5 +29,5 @@ country_line = global_population.country_boundary()
 #process country population
 country_pop = global_population.process_population_tif()
 pop_results = pd.DataFrame(country_pop)
-path_out = os.path.join('data', 'processed', 'BGD', 'population.csv')
+path_out = os.path.join('data', 'processed', 'RWA', 'population.csv')
 pop_results.to_csv(path_out)

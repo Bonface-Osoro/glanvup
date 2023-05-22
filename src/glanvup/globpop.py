@@ -67,11 +67,9 @@ class GlobalPopulation:
             iso3 = country['iso3']
             gid_region = country['gid_region']
             country_name = country['country']
-            lowest = country['lowest']
             
             output.append(iso3)
             output.append(gid_region)
-            output.append(lowest)
             
             country_folder_path = os.path.join('data', 'processed', iso3) #Create folder called "processed" to store
             if not os.path.exists(country_folder_path):                   #country folder
@@ -95,15 +93,14 @@ class GlobalPopulation:
         """
         
         iso3 = GlobalPopulation.country_directory(self)[0]
-        lowest = GlobalPopulation.country_directory(self)[2]
         gid_region = GlobalPopulation.country_directory(self)[1]
 
-        filename = 'gadm36_{}.shp'.format(lowest)
+        filename = 'gadm36_{}.shp'.format(gid_region)
         boundary_data = os.path.join('data', 'raw', filename)
 
         global_boundaries = gpd.read_file(boundary_data)
         
-        country_boundaries = global_boundaries[global_boundaries[self.gid_level] == iso3]
+        country_boundaries = global_boundaries[global_boundaries['GID_0'] == iso3]
         gid_level_name = country_boundaries['NAME_1']
         
         filename = 'gadm_{}.shp'.format(gid_region)

@@ -194,33 +194,6 @@ class FloodProcess:
                 gdf = gpd.read_file(filepath)
                 combined_gdf = combined_gdf.append(gdf, ignore_index = True)
 
-        fig, ax = plt.subplots(1, 1, figsize=(9, 10)) 
-        fig.set_facecolor('gainsboro')
-
-        # Import hazard and plot 
-
-        combined_gdf.plot(color = 'blue', linewidth = 1.5, alpha = .7, legend = True, edgecolor = None, ax = ax)
-
-        cx.add_basemap(ax, crs = 'epsg:4326') #add the map baselayer
-
-        # Subset scenario string
-        hazard_type = self.flood_tiff.split('_')[0]
-        scenario = self.flood_tiff.split('_')[1]
-        model = self.flood_tiff.split('_')[2]
-        year = self.flood_tiff.split('_')[3]
-        return_period = self.flood_tiff.split('_')[4]
-        return_period = return_period.replace('.tif', '')
-
-        # Insert scenario strings in title
-        main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
-            self.country_iso3, hazard_type, scenario, model, year, return_period)
-
-        plt.suptitle(main_title, fontsize = 13, wrap = True)
-
-        path = os.path.join('data', 'processed', self.country_iso3, '{}.png'.format(main_title))
-        fig.savefig(path)
-        plt.close(fig)
-
         return combined_gdf
 
     def flood_pop_overlay(self):
@@ -234,7 +207,7 @@ class FloodProcess:
         data = pd.read_csv(self.pop_csv)
 
         # Import the previously processed boundaries dataset.
-        folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'shapefiles')
+        folder = os.path.join('data', 'processed', self.country_iso3, 'regions')
         for shapefiles in os.listdir(folder):
             if shapefiles.endswith('.shp'):
                 shp_in = os.path.join(folder, shapefiles)
@@ -248,41 +221,5 @@ class FloodProcess:
 
                 #Intersect the two dataframes
                 intersection = gpd.overlay(pop_bound_flood, combined_gdf, how = 'intersection')
-
-                bins = [-1e6, 1000, 10000, 20000, 25000, 30000, 35000,        
-                        40000, 50000, 60000]
-                labels = ['<1k','1-10k','10-20k','20-25k', '25-30k', 
-                        '30-35k', '35-40k', '40-50k', '>60k']
-
-                #create a new variable with our bin labels
-                intersection['bin'] = pd.cut(intersection['population'],
-                    bins=bins, labels=labels)
-                
-                sns.set(font_scale = 0.9)
-                fig, ax = plt.subplots(1, 1, figsize=(9, 10)) 
-
-                # Import hazard and plot 
-                #now plot our data using pandas plot
-                base = intersection.plot(column = 'bin', ax = ax, cmap = 'prism', linewidth = 0,
-                    legend = True, antialiased = False)
-                cx.add_basemap(ax, crs = 'epsg:4326', source = cx.providers.Stamen.Terrain)
-
-                # Subset scenario strings for title
-                n = len(intersection)
-                hazard_type =  self.flood_tiff.split('_')[0]
-                scenario =  self.flood_tiff.split('_')[1]
-                model =  self.flood_tiff.split('_')[2]
-                year =  self.flood_tiff.split('_')[3]
-                return_period =  self.flood_tiff.split('_')[4]
-                return_period = return_period.replace('.tif', '')
-
-                # Insert scenario strings in title
-                main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
-                    self.country_iso3, hazard_type, scenario, model, year, return_period)
-                plt.suptitle(main_title, fontsize = 13, wrap = True)
-
-                path = os.path.join('data', 'processed', self.country_iso3, 'flood_pop_{}.png'.format(main_title))
-                fig.savefig(path)
-                plt.close(fig)
 
         return intersection
