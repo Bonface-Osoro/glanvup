@@ -18,17 +18,18 @@ DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
 
 path = os.path.join(DATA_RAW, 'countries.csv')
-path_2 = os.path.join(DATA_PROCESSED, 'KEN', 'population.csv')
+path_2 = os.path.join(DATA_PROCESSED, 'RWA', 'population.csv')
 
 
 pop_tif_loc = os.path.join(DATA_RAW, 'WorldPop', 'ppp_2020_1km_Aggregated.tif')
 filename = 'inunriver_rcp8p5_0000HadGEM2-ES_2080_rp01000.tif'
 
-flood_pop = FloodProcess(path, 'KEN', filename, path_2)
+flood_pop = FloodProcess(path, 'RWA', filename, path_2)
 f = flood_pop.process_flood_tiff()
 shp = flood_pop.process_tif()
 cgdf = flood_pop.pop_flood()
-intersection = flood_pop.flood_pop_overlay()
+merging = flood_pop.flood_pop_merge()
+intersection = flood_pop.intersect_layers()
 
 fig, ax = plt.subplots(1, 1, figsize=(5, 6)) 
 fig.set_facecolor('gainsboro')
@@ -37,7 +38,7 @@ fig.set_facecolor('gainsboro')
 hazard = cgdf
 hazard.plot(color = 'blue', linewidth = 1.5, alpha = .7, legend = True, edgecolor = None, ax = ax)
 
-cx.add_basemap(ax, crs = 'epsg:4326') #add the map baselayer
+cx.add_basemap(ax, crs = 'epsg:4326', source = cx.providers.Stamen.Terrain) #add the map baselayer
 
 # Subset scenario strings for title
 hazard_type = filename.split('_')[0]
@@ -49,10 +50,11 @@ return_period = return_period.replace('.tif', '')
 
 # Insert scenario strings in title
 main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
-    'KEN', hazard_type, scenario, model, year, return_period)
+    'RWA', hazard_type, scenario, model, year, return_period)
 
 plt.suptitle(main_title, fontsize = 13, wrap = True)
-path = os.path.join('data', 'processed', 'KEN', main_title)
-fig.savefig(path)
+path = os.path.join('data', 'processed', 'RWA', main_title)
+fig.savefig(path, dpi = 720)
 plt.close(fig)
-fig
+
+quant = flood_pop.quantification()

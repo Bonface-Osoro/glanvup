@@ -9,6 +9,7 @@ import pandas as pd
 import seaborn as sns
 from rasterio.mask import mask
 from shapely.geometry import MultiPolygon
+from tqdm import tqdm
 warnings.filterwarnings('ignore')
 
 class FloodProcess:
@@ -196,7 +197,7 @@ class FloodProcess:
 
         return combined_gdf
 
-    def flood_pop_overlay(self):
+    def flood_pop_merge(self):
         """
         This function merges the population data with the boundary data and then 
         performs a spatial intersection overlaying operation to determine the 
@@ -217,9 +218,54 @@ class FloodProcess:
                 
                 pop_bound_flood = country_boundaries.merge(data, left_on = 'GID_1', right_on = 'GID_1')
 
-                combined_gdf = FloodProcess.pop_flood(self)
+        return pop_bound_flood
 
-                #Intersect the two dataframes
-                intersection = gpd.overlay(pop_bound_flood, combined_gdf, how = 'intersection')
+    def intersect_layers(self):
 
-        return intersection
+        """
+        This function intersects two geospatial layers.
+        """
+
+        gdf1 = FloodProcess.flood_pop_merge(self)
+        gdf2 = FloodProcess.pop_flood(self)
+
+        intersection_gdf = gpd.overlay(gdf1, gdf2, how = 'intersection')
+
+        return intersection_gdf   
+
+    def quantification(self):
+        """
+        Quantify the number of people vulnerable to riverine flooding
+        """
+        flood_gdf = FloodProcess.intersect_layers(self)
+
+        # Select columns to use
+        gdf = flood_gdf[['NAME_1_x', 'population', 'value', 'geometry']]
+
+        # Calculate the area occupied by vulnerable people
+        gdf['area'] = gdf.geometry.area
+        gdf = gdf.drop(['geometry'], axis=1)
+        gdf[['scenario', 'period']] = ''
+        
+        for i in range(len(gdf)):
+            scenarios = ['rcp8p5']
+            periods = ['rp01000']
+            for scenario in scenarios:
+                if scenario in self.flood_tiff:
+                    gdf['scenario'].loc[i] = scenario
+    
+            for period in periods:
+                if period in self.flood_tiff:
+                    gdf['period'].loc[i] = period
+
+        filename = '{}results.csv'.format(self.flood_tiff).replace('.tif', '_')
+        
+        folder = os.path.join('data', 'processed', self.country_iso3)
+
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        path_out = os.path.join(folder, filename)
+        gdf.to_csv(path_out)
+
+        return gdf
