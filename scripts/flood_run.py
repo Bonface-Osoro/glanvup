@@ -1,6 +1,7 @@
 import configparser
 import os
 import contextily as cx
+import geopandas as gpd
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -23,38 +24,53 @@ path_2 = os.path.join(DATA_PROCESSED, 'RWA', 'population.csv')
 
 pop_tif_loc = os.path.join(DATA_RAW, 'WorldPop', 'ppp_2020_1km_Aggregated.tif')
 filename = 'inunriver_rcp8p5_0000HadGEM2-ES_2080_rp01000.tif'
+flood_folder = os.path.join(DATA_RAW, 'flood_hazard')
 
-flood_pop = FloodProcess(path, 'RWA', filename, path_2)
-f = flood_pop.process_flood_tiff()
-shp = flood_pop.process_tif()
-cgdf = flood_pop.pop_flood()
-merging = flood_pop.flood_pop_merge()
-intersection = flood_pop.intersect_layers()
+flood_files = os.listdir(flood_folder)
 
-fig, ax = plt.subplots(1, 1, figsize=(5, 6)) 
-fig.set_facecolor('gainsboro')
+for file in flood_files:
+    try:
+        flood_pop = FloodProcess(path, 'RWA', file, path_2)
+        #f = flood_pop.process_flood_tiff()
+        #shp = flood_pop.process_tif()
+        cgdf = flood_pop.pop_flood()
+        merging = flood_pop.flood_pop_merge()
+        intersection = flood_pop.intersect_layers()
 
-# Import hazard and plot 
-hazard = cgdf
-hazard.plot(color = 'blue', linewidth = 1.5, alpha = .7, legend = True, edgecolor = None, ax = ax)
+        fig, ax = plt.subplots(1, 1, figsize=(5, 6)) 
+        fig.set_facecolor('gainsboro')
 
-cx.add_basemap(ax, crs = 'epsg:4326', source = cx.providers.Stamen.Terrain) #add the map baselayer
+        # Import hazard and plot 
+        hazard = cgdf
+        hazard.plot(color = 'blue', linewidth = 1.5, alpha = .7, legend = True, edgecolor = None, ax = ax)
 
-# Subset scenario strings for title
-hazard_type = filename.split('_')[0]
-scenario = filename.split('_')[1]
-model = filename.split('_')[2]
-year = filename.split('_')[3]
-return_period = filename.split('_')[4]
-return_period = return_period.replace('.tif', '')
+        cx.add_basemap(ax, crs = 'epsg:4326', source = cx.providers.Stamen.Terrain) #add the map baselayer
 
-# Insert scenario strings in title
-main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
-    'RWA', hazard_type, scenario, model, year, return_period)
+        # Subset scenario strings for title
+        hazard_type = file.split('_')[0]
+        scenario = file.split('_')[1]
+        model = file.split('_')[2]
+        year = file.split('_')[3]
+        return_period = file.split('_')[4]
+        return_period = return_period.replace('.tif', '')
 
-plt.suptitle(main_title, fontsize = 13, wrap = True)
-path = os.path.join('data', 'processed', 'RWA', main_title)
-fig.savefig(path, dpi = 720)
-plt.close(fig)
+        # Insert scenario strings in title
+        main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
+            'RWA', hazard_type, scenario, model, year, return_period)
 
-quant = flood_pop.quantification()
+        plt.suptitle(main_title, fontsize = 13, wrap = True)
+
+        folder = os.path.join('data', 'processed', 'RWA', 'figures')
+
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        path_out = os.path.join(folder, main_title)
+        fig.savefig(path_out, dpi = 720)
+        plt.close(fig)
+        quant = flood_pop.quantification()
+
+    except:
+        pass
+
+csvs = flood_pop.process_csvs() 

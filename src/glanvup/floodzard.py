@@ -183,7 +183,7 @@ class FloodProcess:
         """
         folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'shapefiles')
 
-        combined_gdf = gpd.GeoDataFrame()
+        combined_gdf = gpd.GeoDataFrame(crs = 'epsg:4326')
 
         for shapefiles in os.listdir(folder):
             
@@ -206,18 +206,18 @@ class FloodProcess:
         """
         # Import the population dataset
         data = pd.read_csv(self.pop_csv)
-
+        
         # Import the previously processed boundaries dataset.
         folder = os.path.join('data', 'processed', self.country_iso3, 'regions')
         for shapefiles in os.listdir(folder):
             if shapefiles.endswith('.shp'):
                 shp_in = os.path.join(folder, shapefiles)
                 country_boundaries = gpd.read_file(shp_in)
-
+                
                 #merge the boundary dataset with population dataset and confirm the projection.
                 
                 pop_bound_flood = country_boundaries.merge(data, left_on = 'GID_1', right_on = 'GID_1')
-
+        
         return pop_bound_flood
 
     def intersect_layers(self):
@@ -228,6 +228,8 @@ class FloodProcess:
 
         gdf1 = FloodProcess.flood_pop_merge(self)
         gdf2 = FloodProcess.pop_flood(self)
+
+        print('Intersecting flood and population layers...')
 
         intersection_gdf = gpd.overlay(gdf1, gdf2, how = 'intersection')
 
@@ -244,12 +246,12 @@ class FloodProcess:
 
         # Calculate the area occupied by vulnerable people
         gdf['area'] = gdf.geometry.area
-        gdf = gdf.drop(['geometry'], axis=1)
+        gdf = gdf.drop(['geometry'], axis = 1)
         gdf[['scenario', 'period']] = ''
         
         for i in range(len(gdf)):
-            scenarios = ['rcp8p5']
-            periods = ['rp01000']
+            scenarios = ['historical', 'rcp4p5','rcp8p5']
+            periods = ['rp00100', 'rp01000']
             for scenario in scenarios:
                 if scenario in self.flood_tiff:
                     gdf['scenario'].loc[i] = scenario
@@ -260,7 +262,7 @@ class FloodProcess:
 
         filename = '{}results.csv'.format(self.flood_tiff).replace('.tif', '_')
         
-        folder = os.path.join('data', 'processed', self.country_iso3)
+        folder = os.path.join('data', 'processed', self.country_iso3, 'csv_results')
 
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -269,3 +271,42 @@ class FloodProcess:
         gdf.to_csv(path_out)
 
         return gdf
+    
+    def process_csvs(self):
+        """
+        This function concatenates all csv intersection results into a single file.
+        """
+
+        folder = os.path.join('data', 'processed', self.country_iso3, 'csv_results')
+
+        # Get a list of all CSV files in the folder
+        csv_files = [file for file in os.listdir(folder) if file.endswith('.csv')]
+
+        # Initialize an empty DataFrame
+        concatenated_data = pd.DataFrame()
+
+        # Iterate through each CSV file
+        print('Concatenating flooding scenario and period file results')
+        for file in csv_files:
+
+            # Read the CSV file into a DataFrame
+            file_path = os.path.join(folder, file)
+            df = pd.read_csv(file_path)
+
+            # Concatenate the DataFrame with the existing data
+            concatenated_data = pd.concat([concatenated_data, df], axis = 0, ignore_index = True, sort = False)
+        
+        concatenated_data.sort_values(by = 'NAME_1_x', inplace = True)
+
+        hazard_type = self.flood_tiff.split('_')[0]
+        country = self.country_iso3
+        filename = '{}_{}_flooding_results.csv'.format(hazard_type, country)
+
+        path_out = os.path.join(folder, filename)
+        concatenated_data.to_csv(path_out)
+
+        return concatenated_data
+
+
+
+
