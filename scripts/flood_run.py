@@ -23,7 +23,7 @@ path_2 = os.path.join(DATA_PROCESSED, 'RWA', 'population.csv')
 
 
 pop_tif_loc = os.path.join(DATA_RAW, 'WorldPop', 'ppp_2020_1km_Aggregated.tif')
-filename = 'inunriver_rcp8p5_0000HadGEM2-ES_2080_rp01000.tif'
+#filename = 'inunriver_rcp8p5_0000HadGEM2-ES_2080_rp01000.tif'
 flood_folder = os.path.join(DATA_RAW, 'flood_hazard')
 
 flood_files = os.listdir(flood_folder)
@@ -42,7 +42,7 @@ for file in flood_files:
 
         # Import hazard and plot 
         hazard = cgdf
-        hazard.plot(color = 'blue', linewidth = 1.5, alpha = .7, legend = True, edgecolor = None, ax = ax)
+        hazard.plot(color = 'red', linewidth = 1.5, alpha = .7, legend = True, edgecolor = None, ax = ax)
 
         cx.add_basemap(ax, crs = 'epsg:4326', source = cx.providers.Stamen.Terrain) #add the map baselayer
 
@@ -56,7 +56,7 @@ for file in flood_files:
 
         # Insert scenario strings in title
         main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
-            'RWA', hazard_type, scenario, model, year, return_period)
+            'USA', hazard_type, scenario, model, year, return_period)
 
         plt.suptitle(main_title, fontsize = 13, wrap = True)
 
