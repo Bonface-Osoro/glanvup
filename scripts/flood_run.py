@@ -31,8 +31,8 @@ flood_files = os.listdir(flood_folder)
 for file in flood_files:
     try:
         flood_pop = FloodProcess(path, 'RWA', file, path_2)
-        #f = flood_pop.process_flood_tiff()
-        #shp = flood_pop.process_tif()
+        f = flood_pop.process_flood_tiff()
+        shp = flood_pop.process_tif()
         cgdf = flood_pop.pop_flood()
         merging = flood_pop.flood_pop_merge()
         intersection = flood_pop.intersect_layers()
@@ -56,7 +56,7 @@ for file in flood_files:
 
         # Insert scenario strings in title
         main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
-            'USA', hazard_type, scenario, model, year, return_period)
+            'RWA', hazard_type, scenario, model, year, return_period)
 
         plt.suptitle(main_title, fontsize = 13, wrap = True)
 

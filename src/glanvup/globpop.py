@@ -67,9 +67,11 @@ class GlobalPopulation:
             iso3 = country['iso3']
             gid_region = country['gid_region']
             country_name = country['country']
+            lowest = country['lowest']
             
             output.append(iso3)
             output.append(gid_region)
+            output.append(lowest)
             
             country_folder_path = os.path.join('data', 'processed', iso3) #Create folder called "processed" to store
             if not os.path.exists(country_folder_path):                   #country folder
@@ -123,6 +125,7 @@ class GlobalPopulation:
         output = []
 
         gid_region = GlobalPopulation.country_directory(self)[1]
+        
         filename = 'gadm_{}.shp'.format(gid_region)
         country_shapefile = os.path.join('data', 'processed', self.country_iso3, 'regions', filename)
 

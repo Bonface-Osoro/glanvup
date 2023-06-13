@@ -51,6 +51,7 @@ class FloodProcess:
             iso3 = country['iso3']
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
+
             
             #set the filename depending our preferred regional level
             filename = "gadm_{}.shp".format(gid_region)
@@ -194,7 +195,7 @@ class FloodProcess:
                 # Read the shapefile and add it to the combined dataframe
                 gdf = gpd.read_file(filepath)
                 combined_gdf = combined_gdf.append(gdf, ignore_index = True)
-
+        
         return combined_gdf
 
     def flood_pop_merge(self):
@@ -231,8 +232,8 @@ class FloodProcess:
 
         print('Intersecting flood and population layers...')
 
-        intersection_gdf = gpd.overlay(gdf1, gdf2, how = 'intersection')
-
+        intersection_gdf = gpd.overlay(gdf2, gdf1, how = 'intersection')
+        
         return intersection_gdf   
 
     def quantification(self):
