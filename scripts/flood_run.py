@@ -1,5 +1,7 @@
 import configparser
 import os
+import re
+import shutil
 import contextily as cx
 import geopandas as gpd
 import numpy as np
@@ -17,60 +19,38 @@ DATA_RAW = os.path.join(BASE_PATH, 'raw')
 DATA_INTERMEDIATE = os.path.join(BASE_PATH, 'intermediate')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
-
 path = os.path.join(DATA_RAW, 'countries.csv')
-path_2 = os.path.join(DATA_PROCESSED, 'RWA', 'population.csv')
 
+filename = 'inunriver_rcp8p5_0000HadGEM2-ES_2080_rp01000.tif'
+flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', filename)
 
-pop_tif_loc = os.path.join(DATA_RAW, 'WorldPop', 'ppp_2020_1km_Aggregated.tif')
-#filename = 'inunriver_rcp8p5_0000HadGEM2-ES_2080_rp01000.tif'
-flood_folder = os.path.join(DATA_RAW, 'flood_hazard')
+#flooding = FloodProcess(path, 'KEN', flood_tiff)
+#flood_tiff = flooding.process_flood_tiff()
+#flood_shp = flooding.process_flood_shapefile()
 
-flood_files = os.listdir(flood_folder)
+folder = os.path.join(DATA_RAW, 'wealth')
+pattern = r'_relative_wealth_index'
 
-for file in flood_files:
-    try:
-        flood_pop = FloodProcess(path, 'RWA', file, path_2)
-        f = flood_pop.process_flood_tiff()
-        shp = flood_pop.process_tif()
-        cgdf = flood_pop.pop_flood()
-        merging = flood_pop.flood_pop_merge()
-        intersection = flood_pop.intersect_layers()
+folder_out = os.path.join(DATA_RAW, 'rwi')
 
-        fig, ax = plt.subplots(1, 1, figsize=(5, 6)) 
-        fig.set_facecolor('gainsboro')
+for filename in os.listdir(folder):
+    source_file_path = os.path.join(folder, filename)
 
-        # Import hazard and plot 
-        hazard = cgdf
-        hazard.plot(color = 'red', linewidth = 1.5, alpha = .7, legend = True, edgecolor = None, ax = ax)
+    if os.path.isfile(source_file_path):
+        destination_file_path = os.path.join(folder_out, filename)
+    
+    shutil.copy2(source_file_path, destination_file_path)
 
-        cx.add_basemap(ax, crs = 'epsg:4326', source = cx.providers.Stamen.Terrain) #add the map baselayer
+for files in os.listdir(folder_out):
 
-        # Subset scenario strings for title
-        hazard_type = file.split('_')[0]
-        scenario = file.split('_')[1]
-        model = file.split('_')[2]
-        year = file.split('_')[3]
-        return_period = file.split('_')[4]
-        return_period = return_period.replace('.tif', '')
+    file_path = os.path.join(folder_out, files)
 
-        # Insert scenario strings in title
-        main_title = 'Projected River Flooding:\n{}, {}, {}, {}, {}, {}'.format(
-            'RWA', hazard_type, scenario, model, year, return_period)
+    if os.path.isfile(file_path):
 
-        plt.suptitle(main_title, fontsize = 13, wrap = True)
+        new_filename = re.sub(pattern, '', files)
 
-        folder = os.path.join('data', 'processed', 'RWA', 'figures')
+        print(new_filename)
 
-        if not os.path.exists(folder):
-            os.makedirs(folder)
+        new_file_path = os.path.join(folder_out, new_filename)
 
-        path_out = os.path.join(folder, main_title)
-        fig.savefig(path_out, dpi = 720)
-        plt.close(fig)
-        quant = flood_pop.quantification()
-
-    except:
-        pass
-
-csvs = flood_pop.process_csvs() 
+        os.rename(file_path, new_file_path)
