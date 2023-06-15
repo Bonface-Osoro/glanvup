@@ -503,27 +503,36 @@ class WealthProcess:
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
 
-        #loading in gid level shapefile
             filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
-            path_region = os.path.join(BASE_PATH, 'processed', iso3, 'regions', filename)
-            gdf_region = gpd.read_file(path_region, crs = 'EPSG:4326')
+            folder = os.path.join('data','processed', iso3, 'regions')
+            path_regions = os.path.join(folder, filename)
+            regions = gpd.read_file(path_regions, crs = 'epsg:4326')
 
-        #loading in rwi info
-            filename = '{}_relative_wealth_index.shp'.format(iso3) #each regional file is named using the gid id
-            folder= os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
-            path_rwi= os.path.join(folder, filename)
-            gdf_rwi = gpd.read_file(path_rwi, crs = 'EPSG:4326')
+            for idx, region in regions.iterrows():
+                gid_id = region[gid_level]
 
-            print('Intersecting wealth data...')
+                #loading in gid level shapefile
+                filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
+                path_region = os.path.join(BASE_PATH, 'processed', iso3, 'regions', filename)
+                gdf_region = gpd.read_file(path_region, crs = 'EPSG:4326')
 
-            gdf_rwi = gpd.overlay(gdf_rwi, gdf_region, how = 'intersection')
+                #loading in rwi info
+                filename = '{}_relative_wealth_index.shp'.format(iso3) #each regional file is named using the gid id
+                folder= os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
+                path_rwi= os.path.join(folder, filename)
+                gdf_rwi = gpd.read_file(path_rwi, crs = 'EPSG:4326')
+                gdf_region = gdf_region[gdf_region[gid_level] == gid_id]
 
-            filename = '{}.shp'.format(gid_region)
-            folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'rwi', 'regions' )
-            if not os.path.exists(folder_out):
-                os.makedirs(folder_out)
-            path_out = os.path.join(folder_out, filename)
+                print('Intersecting wealth data...')
 
-            gdf_rwi.to_file(path_out, crs = 'EPSG:4326')
+                gdf_rwi = gpd.overlay(gdf_rwi, gdf_region, how = 'intersection')
+
+                filename = '{}.shp'.format(gid_id)
+                folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'rwi', 'regions' )
+                if not os.path.exists(folder_out):
+                    os.makedirs(folder_out)
+                path_out = os.path.join(folder_out, filename)
+
+                gdf_rwi.to_file(path_out, crs = 'EPSG:4326')
 
         return print('Regional relative wealth processing completed for {}'.format(iso3))
