@@ -16,6 +16,6 @@ path = os.path.join(DATA_RAW, 'countries.csv')
 filename = 'inunriver_rcp8p5_0000HadGEM2-ES_2080_rp01000.tif'
 flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', filename)
 
-flooding = FloodProcess(path, 'JAM', flood_tiff)
+flooding = FloodProcess(path, 'GBR', flood_tiff)
 flood_tiff = flooding.process_flood_tiff()
 flood_shp = flooding.process_flood_shapefile()

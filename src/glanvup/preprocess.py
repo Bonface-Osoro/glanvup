@@ -466,23 +466,30 @@ class WealthProcess:
         iso3 = self.country_iso3
         filename = '{}_relative_wealth_index.csv'.format(iso3)
         path_rwi = os.path.join(BASE_PATH, 'raw', 'rwi', filename)
-        wealth = gpd.read_file(path_rwi, encoding = 'latin-1')
 
-        #making long lat points into geometry column
-        gdf = gpd.GeoDataFrame(wealth, geometry = gpd.points_from_xy(wealth.longitude, wealth.latitude), 
-                               crs = 'EPSG:4326') 
-        #setting path out
-        filename_out = '{}_relative_wealth_index.shp'.format(iso3) #each regional file is named using the gid id
-        folder_out = os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
+        if os.path.isfile(path_rwi):
 
-        if not os.path.exists(folder_out):
-            os.makedirs(folder_out)
+            wealth = gpd.read_file(path_rwi, encoding = 'latin-1')
 
-        path_out = os.path.join(folder_out, filename_out)
+            #making long lat points into geometry column
+            gdf = gpd.GeoDataFrame(wealth, geometry = gpd.points_from_xy(wealth.longitude, wealth.latitude), 
+                                crs = 'EPSG:4326') 
+            #setting path out
+            filename_out = '{}_relative_wealth_index.shp'.format(iso3) #each regional file is named using the gid id
+            folder_out = os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
 
-        #saving new .csv to location
-        gdf.to_file(path_out,crs = 'EPSG:4326')
+            if not os.path.exists(folder_out):
+                os.makedirs(folder_out)
+
+            path_out = os.path.join(folder_out, filename_out)
+
+            #saving new .csv to location
+            gdf.to_file(path_out,crs = 'EPSG:4326')
         
+        else:
+
+            print('{}.relative wealth data not found. Skipping...'.format(iso3))
+
         return print('Relative wealth processing completed for {}'.format(iso3))
     
 
@@ -518,21 +525,28 @@ class WealthProcess:
 
                 #loading in rwi info
                 filename = '{}_relative_wealth_index.shp'.format(iso3) #each regional file is named using the gid id
-                folder= os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
-                path_rwi= os.path.join(folder, filename)
-                gdf_rwi = gpd.read_file(path_rwi, crs = 'EPSG:4326')
-                gdf_region = gdf_region[gdf_region[gid_level] == gid_id]
+                folder = os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
+                path_rwi = os.path.join(folder, filename)
 
-                print('Intersecting wealth data {}...'.format(iso3))
+                if os.path.isfile(path_rwi):
 
-                gdf_rwi = gpd.overlay(gdf_rwi, gdf_region, how = 'intersection')
+                    gdf_rwi = gpd.read_file(path_rwi, crs = 'EPSG:4326')
+                    gdf_region = gdf_region[gdf_region[gid_level] == gid_id]
 
-                filename = '{}.shp'.format(gid_id)
-                folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'rwi', 'regions' )
-                if not os.path.exists(folder_out):
-                    os.makedirs(folder_out)
-                path_out = os.path.join(folder_out, filename)
+                    print('Intersecting wealth data {}...'.format(iso3))
 
-                gdf_rwi.to_file(path_out, crs = 'EPSG:4326')
+                    gdf_rwi = gpd.overlay(gdf_rwi, gdf_region, how = 'intersection')
+
+                    filename = '{}.shp'.format(gid_id)
+                    folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'rwi', 'regions' )
+                    if not os.path.exists(folder_out):
+                        os.makedirs(folder_out)
+                    path_out = os.path.join(folder_out, filename)
+
+                    gdf_rwi.to_file(path_out, crs = 'EPSG:4326')
+
+                else:
+
+                    print('{} relative wealth data not found. Skipping...'.format(iso3))
 
         return print('Regional relative wealth processing completed for {}'.format(iso3))
