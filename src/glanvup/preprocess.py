@@ -533,7 +533,7 @@ class WealthProcess:
                     gdf_rwi = gpd.read_file(path_rwi, crs = 'EPSG:4326')
                     gdf_region = gdf_region[gdf_region[gid_level] == gid_id]
 
-                    print('Intersecting wealth data {}...'.format(iso3))
+                    print('Intersecting wealth data {}'.format(gid_id))
 
                     gdf_rwi = gpd.overlay(gdf_rwi, gdf_region, how = 'intersection')
 
