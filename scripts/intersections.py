@@ -63,8 +63,6 @@ def intersect_layers(folder_1, folder_2):
 
     return 'Intersections Completed'
 
-#intersect_layers(population_folder, flood_folder)
-
 # Population and wealth layer
 intersection_1_folder = os.path.join(DATA_RESULTS, 'KEN', 'pop_hazard')
 rwi_folder = os.path.join(DATA_PROCESSED, 'KEN', 'coverage', 'regions', 'GSM')
