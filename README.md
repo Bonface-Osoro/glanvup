@@ -17,24 +17,12 @@ The method (see Figure 1) will utilize 47 million OpenCelliD data points to info
 
 ## Method Box
 
-### Figure 1 Proposed Method.
+#### Figure 1 Proposed Method.
 <p align="center">
   <img src="/docs/method.png" />
 </p>
 
 The results are based on the data for historical baseline from 1980 and the Representative Concentration Pathway 8.5 (rising carbon emissions) (RCP8.5) scenarios obtained from the World Resource Institute [1]. The population data used in the study is from the WorldPop website [2]. WorldPop provides different sets of data. In this work, the population count data was used. Through the attached codebase, the raster population count data layer was processed in python to estimate the number of people within a given polygon. The processing was done for each sub-regional level of the 47 counties of Kenya. The results are then aggregated into 47 counties of Kenya before being grouped into eight regions.
-
-## Example Results
-
-### Figure 1 Spatial distribution of vulnerable Kenyan population due to riverine flooding.
-<p align="center">
-  <img src="/docs/pop_flood_maps.png" />
-</p>
-
-### Figure 2 Average mean area and inudation depth of riverine flooding for 8 Kenyan regions
-<p align="center">
-  <img src="/docs/flood_plots.png" />
-</p>
 
 ## Required Data
 
