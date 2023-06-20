@@ -14,6 +14,6 @@ DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
 path = os.path.join(DATA_RAW, 'countries.csv')
 
-coverages = CoverageProcess(path, 'JAM')
+coverages = CoverageProcess(path, 'KEN')
 cov_country = coverages.process_national_coverage()
 cov_region = coverages.process_regional_coverage()

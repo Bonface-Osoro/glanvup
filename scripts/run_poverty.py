@@ -15,6 +15,6 @@ DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
 path = os.path.join(DATA_RAW, 'countries.csv')
 
-wealths = WealthProcess(path, 'JAM')
+wealths = WealthProcess(path, 'KEN')
 country_wealth = wealths.process_national_rwi()
 regional_wealth = wealths.process_regional_rwi() 
