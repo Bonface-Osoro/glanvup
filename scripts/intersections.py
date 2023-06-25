@@ -15,6 +15,7 @@ DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 DATA_RESULTS = os.path.join(BASE_PATH, 'results')
 
 def intersect_layers(folder_1, folder_2, folder_out):
+    
     """
     This function intersect two shapefiles with 
     similar names located in two different folders 
@@ -144,4 +145,6 @@ def multi_layers(iso3, layer_1, layer_2, cell_generation):
 
 if __name__ == '__main__':
 
+    multi_layers('KEN', 'population', 'river_flood', 'GSM')
     multi_layers('KEN', 'intersection', 'coverage', 'GSM')
+    multi_layers('KEN', 'intersection', 'poverty', 'GSM')
