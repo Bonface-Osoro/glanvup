@@ -5,8 +5,6 @@ import rasterio
 import geopandas as gpd
 import pandas as pd
 from rasterio.mask import mask
-from scipy.spatial import Voronoi
-from shapely.geometry import Polygon
 from shapely.geometry import MultiPolygon
 from tqdm import tqdm
 
@@ -206,27 +204,6 @@ class ProcessRegions:
                 pass
 
         return print('Regional shapefiles processing completed for {}'.format(self.country_iso3))
-    
-    def process_sub_region_boundaries(self):
-
-        region_path = '../' #Not needed now
-        countries = gpd.read_file(region_path)
-
-        for index, row in tqdm(countries.iterrows(), desc = 'Processing sub-region boundaries'):
-
-            sub_region_shapefile = gpd.GeoDataFrame([row], crs = countries.crs)
-
-            filename = '{}.shp'.format(row['GID_1'])    
-
-            folder_out = os.path.join('data', 'processed', self.country_iso3, 'boundaries')
-
-            if not os.path.exists(folder_out):
-                os.makedirs(folder_out)
-            path_out = os.path.join(folder_out, filename)
-
-            sub_region_shapefile.to_file(path_out, driver = 'ESRI Shapefile')
-
-        return print('Sub-region boundary processed')
 
 
 class ProcessPopulation:
@@ -560,32 +537,13 @@ class WealthProcess:
 
                     gdf_rwi = gpd.overlay(gdf_rwi, gdf_region, how = 'intersection')
 
-                    # Extract coordinates from GeoDataFrame
-                    points = gdf_rwi.geometry.apply(lambda p: (p.x, p.y)).tolist()
-
-                    # Generate Voronoi diagram
-                    vor = Voronoi(points)
-
-                    # Create empty list to store polygons
-                    voronoi_polygons = []
-
-                    # Iterate over the regions and create polygons
-                    for region in vor.regions:
-                        if not -1 in region and len(region) > 0:
-                            polygon_vertices = [vor.vertices[i] for i in region]
-                            polygon = Polygon(polygon_vertices)
-                            voronoi_polygons.append(polygon)
-
-                    # Create a GeoDataFrame from the Voronoi polygons
-                    voronoi_gdf = gpd.GeoDataFrame(geometry = voronoi_polygons)
-
                     filename = '{}.shp'.format(gid_id)
                     folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'rwi', 'regions' )
                     if not os.path.exists(folder_out):
                         os.makedirs(folder_out)
                     path_out = os.path.join(folder_out, filename)
 
-                    voronoi_gdf.to_file(path_out, crs = 'EPSG:4326')
+                    gdf_rwi.to_file(path_out, crs = 'EPSG:4326')
 
                 else:
 
