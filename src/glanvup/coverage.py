@@ -195,7 +195,7 @@ class CoverageProcess:
 
                 gdf_region = gpd.read_file(path_region, crs = 'EPSG:4326')
 
-                technologies = ['GSM', '3G', '4G']
+                technologies = ['GSM']
 
                 for tech in tqdm(technologies, desc = 'Processing coverage shapefiles for {} coverage'.format(iso3)):
                     #loading in coverage info

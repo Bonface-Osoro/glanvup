@@ -5,8 +5,6 @@ import geopandas as gpd
 import pandas as pd
 import contextily as ctx
 import matplotlib.pyplot as plt
-from scipy.spatial import Voronoi
-from shapely.geometry import Polygon
 from glanvup.preprocess import WealthProcess
 pd.options.mode.chained_assignment = None
 warnings.filterwarnings('ignore')
@@ -20,6 +18,6 @@ DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
 path = os.path.join(DATA_RAW, 'countries.csv')
 
-wealths = WealthProcess(path, 'KEN')
+wealths = WealthProcess(path, 'ARM')
 country_wealth = wealths.process_national_rwi()
 regional_wealth = wealths.process_regional_rwi() 
