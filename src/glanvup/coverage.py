@@ -40,7 +40,9 @@ def clean_coverage(x):
     """
     # if its a single polygon, just return the polygon geometry
     if x.geometry.geom_type == 'Polygon':
+
         if x.geometry.area > 1e7:
+
             return x.geometry
 
     # if its a multipolygon, we start trying to simplify and
@@ -55,6 +57,7 @@ def clean_coverage(x):
         for y in x.geometry:
 
             if y.area > threshold:
+                
                 new_geom.append(y)
 
         return MultiPolygon(new_geom)
@@ -195,7 +198,7 @@ class CoverageProcess:
 
                 gdf_region = gpd.read_file(path_region, crs = 'EPSG:4326')
 
-                technologies = ['GSM']
+                technologies = ['GSM', '3G', '4G']
 
                 for tech in tqdm(technologies, desc = 'Processing coverage shapefiles for {} coverage'.format(iso3)):
                     #loading in coverage info

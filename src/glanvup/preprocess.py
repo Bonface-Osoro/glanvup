@@ -108,10 +108,13 @@ class ProcessCountry:
         path = os.path.join('data', 'processed', self.country_iso3)
 
         if os.path.exists(os.path.join(path, 'national_outline.shp')):
+
             print('Completed national outline processing')
+            
         print('Processing country shapes')
 
         if not os.path.exists(path):
+
             os.makedirs(path)
 
         shape_path = os.path.join(path, 'national_outline.shp')
@@ -180,11 +183,13 @@ class ProcessRegions:
             path_processed = os.path.join(folder, filename)
 
             if os.path.exists(path_processed):
+
                 continue
 
             print('Processing GID_{} region shapes'.format(regional_level))
 
             if not os.path.exists(folder):
+
                 os.mkdir(folder)
 
             filename = 'gadm36_{}.shp'.format(regional_level)
@@ -200,9 +205,13 @@ class ProcessRegions:
             regions['geometry'] = regions.apply(remove_small_shapes, axis = 1)
 
             try:
+
                 regions.to_file(path_processed, driver = 'ESRI Shapefile')
+
             except:
+
                 print('Unable to write {}'.format(filename))
+
                 pass
 
         return print('Regional shapefiles processing completed for {}'.format(self.country_iso3))
@@ -221,7 +230,9 @@ class ProcessRegions:
             folder_out = os.path.join('data', 'processed', self.country_iso3, 'boundaries')
 
             if not os.path.exists(folder_out):
+
                 os.makedirs(folder_out)
+
             path_out = os.path.join(folder_out, filename)
 
             sub_region_shapefile.to_file(path_out, driver = 'ESRI Shapefile')
@@ -307,10 +318,13 @@ class ProcessPopulation:
         folder_out = os.path.join('data', 'processed', iso3, 'population', 'national')
 
         if not os.path.exists(folder_out):
+
             os.makedirs(folder_out)
+
         path_out = os.path.join(folder_out, filename_out)
 
-        with rasterio.open(path_out, "w", **out_meta) as dest:
+        with rasterio.open(path_out, 'w', ** out_meta) as dest:
+
             dest.write(out_img)
 
         return print('Population processing completed for {}'.format(iso3))
@@ -329,13 +343,13 @@ class ProcessPopulation:
         for idx, country in countries.iterrows():
 
             if not country['iso3'] == self.country_iso3: 
+
                 continue   
             
             #define our country-specific parameters, including gid information
             iso3 = country['iso3']
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
-
             
             #set the filename depending our preferred regional level
             filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
@@ -376,15 +390,17 @@ class ProcessPopulation:
                                 'width': out_img.shape[2], 'transform': out_transform,
                                 'crs': 'epsg:4326'})
 
-                filename_out = '{}.tif'.format(gid_id) #each regional file is named using the gid id
+                filename_out = '{}.tif'.format(gid_id) 
                 folder_out = os.path.join('data', 'processed', self.country_iso3, 'population', 'tiffs')
 
                 if not os.path.exists(folder_out):
+
                     os.makedirs(folder_out)
 
                 path_out = os.path.join(folder_out, filename_out)
 
                 with rasterio.open(path_out, 'w', **out_meta) as dest:
+
                     dest.write(out_img)
             
             print('Processing complete for {}'.format(iso3))
@@ -398,9 +414,11 @@ class ProcessPopulation:
         """
         folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'tiffs')
 
-        for tifs in tqdm(os.listdir(folder), desc = 'Processing population shapefiles for {}...'.format(self.country_iso3)):
+        for tifs in tqdm(os.listdir(folder), 
+                         desc = 'Processing population shapefiles for {}...'.format(self.country_iso3)):
             try:
                 if tifs.endswith('.tif'):
+
                     tifs = os.path.splitext(tifs)[0]
 
                     folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'tiffs')
@@ -410,6 +428,7 @@ class ProcessPopulation:
 
                     folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'shapefiles')
                     if not os.path.exists(folder):
+
                         os.mkdir(folder)
                         
                     filename = tifs + '.shp'
@@ -498,15 +517,15 @@ class WealthProcess:
             gdf = gpd.GeoDataFrame(wealth, geometry = gpd.points_from_xy(wealth.longitude, wealth.latitude), 
                                 crs = 'EPSG:4326') 
             #setting path out
-            filename_out = '{}_relative_wealth_index.shp'.format(iso3) #each regional file is named using the gid id
+            filename_out = '{}_relative_wealth_index.shp'.format(iso3) 
             folder_out = os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
 
             if not os.path.exists(folder_out):
+
                 os.makedirs(folder_out)
 
             path_out = os.path.join(folder_out, filename_out)
 
-            #saving new .csv to location
             gdf.to_file(path_out,crs = 'EPSG:4326')
         
         else:
@@ -526,7 +545,9 @@ class WealthProcess:
         iso3 = self.country_iso3
 
         for idx, country in countries.iterrows():
+
             if not country["iso3"] == iso3:
+
                 continue
 
             iso3 = country['iso3']                 
@@ -539,6 +560,7 @@ class WealthProcess:
             regions = gpd.read_file(path_regions, crs = 'epsg:4326')
 
             for idx, region in regions.iterrows():
+
                 gid_id = region[gid_level]
 
                 #loading in gid level shapefile
@@ -547,7 +569,7 @@ class WealthProcess:
                 gdf_region = gpd.read_file(path_region, crs = 'EPSG:4326')
 
                 #loading in rwi info
-                filename = '{}_relative_wealth_index.shp'.format(iso3) #each regional file is named using the gid id
+                filename = '{}_relative_wealth_index.shp'.format(iso3) 
                 folder = os.path.join(BASE_PATH, 'processed', iso3 , 'rwi', 'national')
                 path_rwi = os.path.join(folder, filename)
 
@@ -571,7 +593,9 @@ class WealthProcess:
 
                     # Iterate over the regions and create polygons
                     for region in vor.regions:
+
                         if not -1 in region and len(region) > 0:
+
                             polygon_vertices = [vor.vertices[i] for i in region]
                             polygon = Polygon(polygon_vertices)
                             voronoi_polygons.append(polygon)
@@ -581,8 +605,11 @@ class WealthProcess:
 
                     filename = '{}.shp'.format(gid_id)
                     folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'rwi', 'regions' )
+
                     if not os.path.exists(folder_out):
+
                         os.makedirs(folder_out)
+                        
                     path_out = os.path.join(folder_out, filename)
 
                     voronoi_gdf.to_file(path_out, crs = 'EPSG:4326')

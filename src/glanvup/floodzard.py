@@ -44,6 +44,7 @@ class FloodProcess:
         for idx, country in countries.iterrows():
 
             if not country['iso3'] == self.country_iso3: 
+
                 continue   
             
             #define our country-specific parameters, including gid information
@@ -58,7 +59,7 @@ class FloodProcess:
             
             #then load in our regions as a geodataframe
             path_regions = os.path.join(folder, filename)
-            regions = gpd.read_file(path_regions, crs = 'epsg:4326')#[:2]
+            regions = gpd.read_file(path_regions, crs = 'epsg:4326')
             
             for idx, region in regions.iterrows():
 
@@ -73,8 +74,8 @@ class FloodProcess:
                 filename = self.flood_tiff
                 path_hazard = os.path.join(filename)
                 hazard = rasterio.open(path_hazard, 'r+')
-                hazard.nodata = 255                       #set the no data value
-                hazard.crs.from_epsg(4326)                #set the crs
+                hazard.nodata = 255                       
+                hazard.crs.from_epsg(4326)                
 
                 #create a new gpd dataframe from our single region geometry
                 geo = gpd.GeoDataFrame(gpd.GeoSeries(region.geometry))
@@ -96,15 +97,16 @@ class FloodProcess:
                                 'crs': 'epsg:4326'})
 
                 #now we write out at the regional level
-                filename_out = '{}.tif'.format(gid_id) #each regional file is named using the gid id
+                filename_out = '{}.tif'.format(gid_id) 
                 folder_out = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
 
                 if not os.path.exists(folder_out):
+
                     os.makedirs(folder_out)
 
                 path_out = os.path.join(folder_out, filename_out)
 
-                with rasterio.open(path_out, "w", **out_meta) as dest:
+                with rasterio.open(path_out, 'w', ** out_meta) as dest:
                     dest.write(out_img)
             
             print('Processing complete for {}'.format(iso3))
@@ -118,9 +120,13 @@ class FloodProcess:
         """
         folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
 
-        for tifs in tqdm(os.listdir(folder), desc = 'Processing flooding shapefiles for {}...'.format(self.country_iso3)):
+        for tifs in tqdm(os.listdir(folder), 
+                         desc = 'Processing flooding shapefiles for {}...'.format(self.country_iso3)):
+
             try:
+
                 if tifs.endswith('.tif'):
+
                     tifs = os.path.splitext(tifs)[0]
 
                     folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
@@ -130,6 +136,7 @@ class FloodProcess:
 
                     folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'shapefiles')
                     if not os.path.exists(folder):
+                        
                         os.mkdir(folder)
                         
                     filename = tifs + '.shp'

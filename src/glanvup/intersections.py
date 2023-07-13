@@ -30,27 +30,14 @@ class IntersectLayers:
         ---------
         country_iso3 : string
             Country iso3 to be processed..
-        folder_1 : string
-            Folder path of the first shapefile
-        folder_2 : string
-            Folder path of the second shapefile
-        folder_out : string
-            Path of the output folder to store 
-            the intersected shapefiles
-        layer_1 : string
-            Layer type to process. It can ONLY 
-            be 'population' or 'intersection'.
-        layer_2 : string 
-            Second layer to process. It can ONLY 
-            be 'river_flood', 'coverage' and 'poverty'.
         cell_generation : string
             Cellphone technology. It can only be 
             'GSM', '3G' or '4G'.
+        flood_file : string
+            Name of the flood layer containing 
+            the scenario and period information
         """
         self.country_iso3 = country_iso3
-        #self.folder_1 = folder_1
-        #self.folder_2 = folder_2
-        #self.folder_out = folder_out
         self.cell_gen = cell_gen
         self.flood_file = flood_file
 
@@ -75,15 +62,14 @@ class IntersectLayers:
 
                             if firstfile in secondfile:
 
-                                #print('Intersecting layers for {}'.format(str(firstfile).strip('.shp')))
                                 intersection = gpd.overlay(first_gdf, second_gdf, how = 'intersection')
                                 
                                 region_part = str(firstfile)
-                                flood_part = str(self.flood_file).strip('.tif')
-                                filename = '{}_{}'.format(flood_part, region_part)
                                 
                                 if not os.path.exists(folder_out):
+
                                     os.makedirs(folder_out)
+
                                 path_out = os.path.join(folder_out, region_part)
 
                                 intersection.to_file(path_out, driver = 'ESRI Shapefile')
@@ -104,6 +90,7 @@ class IntersectLayers:
         flood_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'hazards', 'inunriver', 'shapefiles')
         folder_out_1 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard')
         if not os.path.exists(folder_out_1):
+
             os.makedirs(folder_out_1)
 
         intersection = IntersectLayers.intersect_layers(self, population_folder, flood_folder, folder_out_1)
@@ -116,6 +103,7 @@ class IntersectLayers:
         coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'coverage', 'regions', self.cell_gen)
         folder_out_2 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard_coverage')
         if not os.path.exists(folder_out_2):
+
             os.makedirs(folder_out_2)
 
         intersection = IntersectLayers.intersect_layers(self, intersection_1_folder, coverage_folder, folder_out_2)
@@ -145,24 +133,26 @@ class IntersectLayers:
 
                             if firstfile in secondfile:
 
-                                #print('Intersecting layers for {}'.format(str(firstfile).strip('.shp')))
                                 intersection = gpd.overlay(first_gdf, second_gdf, how = 'intersection')
                                 
+                                cell_generation = str(self.cell_gen)
                                 region_part = str(firstfile)
                                 flood_part = str(self.flood_file).strip('.tif')
-                                print(flood_part)
-                                filename = '{}_{}'.format(flood_part, region_part)
+                                
+                                filename = '{}_{}_{}'.format(cell_generation, flood_part, region_part)
 
                                 folder_out_3 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard_coverage_poverty')
                                 if not os.path.exists(folder_out_3):
+
                                     os.makedirs(folder_out_3)
+                                    
                                 path_out = os.path.join(folder_out_3, filename)
 
                                 intersection.to_file(path_out, driver = 'ESRI Shapefile')
                                 
                             else:
 
-                                print('No Matching shapefile found. Skipping...')
+                                print('Skipping population, poverty and coverage intersection...missing data')
             except:
 
                 pass
@@ -170,9 +160,9 @@ class IntersectLayers:
         return None
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
 
     inter = IntersectLayers()
     inter.pop_flood()
     inter.pophaz_coverage()
-    inter.intersect_all()
+    inter.intersect_all()'''

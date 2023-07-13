@@ -24,32 +24,43 @@ flood_files = os.listdir(flood_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
-for idx, country in countries.iterrows():
+isos = ['ECU', 'EGY', 'ETH', 'FJI', 'GEO', 'GHA', 'GIN', 'GMB', 'GNB', 
+        'GTM', 'HND', 'HTI', 'IDN', 'IRM', 'IRQ', 'JOR', 'KAZ', 'KEN', 
+        'KGZ', 'KHM', 'LAO', 'LBN', 'LBR', 'LKA', 'LSO', 'MDA', 'MDG', 
+        'MEX', 'MLI', 'MMR', 'MOZ', 'MRT', 'MYS', 'NAM', 'NER', 'NGA', 
+        'NIC', 'NPL', 'PAK', 'PER', 'PHL', 'PNG', 'RWA', 'SDN', 'SEN', 
+        'SLE', 'SLV', 'SOM', 'SRB', 'SYR', 'TCD', 'TGO', 'THA', 'TJK', 
+        'TKM', 'TLS', 'TUN', 'TUR', 'TZA', 'UGA', 'UKR', 'UZB', 'VEN', 
+        'VNM', 'YEM', 'ZAF', 'ZMB', 'ZWE']
 
-    intersected_files = os.path.join(DATA_RESULTS, countries['iso3'].loc[idx], 'pop_hazard_coverage_poverty')
+'''for idx, country in countries.iterrows():
 
-    if not country['iso3'] == 'TUR': 
-        continue 
+    intersected_files = os.path.join(DATA_RESULTS, 
+                                     countries['iso3'].loc[idx], 
+                                     'pop_hazard_coverage_poverty')
 
+    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1: 
+        continue '''
+for iso in isos:
     for file in flood_files:
 
         try:
 
             flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
-            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
+            flooding = FloodProcess(path, iso, flood_tiff)
             flooding.process_flood_tiff()
             flooding.process_flood_shapefile()
 
-            wealths = WealthProcess(path, countries['iso3'].loc[idx])
-            wealths.process_national_rwi()
-            wealths.process_regional_rwi()
+            wealths = WealthProcess(path, iso)
+            #wealths.process_national_rwi()
+            #wealths.process_regional_rwi()
 
-            coverages = CoverageProcess(path, countries['iso3'].loc[idx])
-            coverages.process_national_coverage()
-            coverages.process_regional_coverage()
+            coverages = CoverageProcess(path, iso)
+            #coverages.process_national_coverage()
+            #coverages.process_regional_coverage()
 
-            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            intersection = IntersectLayers(iso, '3G', file)
             intersection.pop_flood()
             intersection.pophaz_coverage()
             intersection.intersect_all()
