@@ -148,12 +148,3 @@ if __name__ == '__main__':
         except:
 
             pass
-
-isos = ['ECU', 'EGY', 'ETH', 'FJI', 'GEO', 'GHA', 'GIN', 'GMB', 'GNB', 
-        'GTM', 'HND', 'HTI', 'IDN', 'IRM', 'IRQ', 'JOR', 'KAZ', 'KEN', 
-        'KGZ', 'KHM', 'LAO', 'LBN', 'LBR', 'LKA', 'LSO', 'MDA', 'MDG', 
-        'MEX', 'MLI', 'MMR', 'MOZ', 'MRT', 'MYS', 'NAM', 'NER', 'NGA', 
-        'NIC', 'NPL', 'PAK', 'PER', 'PHL', 'PNG', 'RWA', 'SDN', 'SEN', 
-        'SLE', 'SLV', 'SOM', 'SRB', 'SYR', 'TCD', 'TGO', 'THA', 'TJK', 
-        'TKM', 'TLS', 'TUN', 'TUR', 'TZA', 'UGA', 'UKR', 'UZB', 'VEN', 
-        'VNM', 'YEM', 'ZAF', 'ZMB', 'ZWE']

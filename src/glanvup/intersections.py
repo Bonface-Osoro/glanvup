@@ -76,7 +76,7 @@ class IntersectLayers:
                                 
                             else:
 
-                                print('No Matching shapefile found. Skipping...')
+                                print('No Matching shapefile found for {}. Skipping...'.format(self.country_iso3))
             except:
 
                 pass

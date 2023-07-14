@@ -24,43 +24,34 @@ flood_files = os.listdir(flood_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
-isos = ['ECU', 'EGY', 'ETH', 'FJI', 'GEO', 'GHA', 'GIN', 'GMB', 'GNB', 
-        'GTM', 'HND', 'HTI', 'IDN', 'IRM', 'IRQ', 'JOR', 'KAZ', 'KEN', 
-        'KGZ', 'KHM', 'LAO', 'LBN', 'LBR', 'LKA', 'LSO', 'MDA', 'MDG', 
-        'MEX', 'MLI', 'MMR', 'MOZ', 'MRT', 'MYS', 'NAM', 'NER', 'NGA', 
-        'NIC', 'NPL', 'PAK', 'PER', 'PHL', 'PNG', 'RWA', 'SDN', 'SEN', 
-        'SLE', 'SLV', 'SOM', 'SRB', 'SYR', 'TCD', 'TGO', 'THA', 'TJK', 
-        'TKM', 'TLS', 'TUN', 'TUR', 'TZA', 'UGA', 'UKR', 'UZB', 'VEN', 
-        'VNM', 'YEM', 'ZAF', 'ZMB', 'ZWE']
-
-'''for idx, country in countries.iterrows():
+for idx, country in countries.iterrows():
 
     intersected_files = os.path.join(DATA_RESULTS, 
                                      countries['iso3'].loc[idx], 
                                      'pop_hazard_coverage_poverty')
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1: 
-        continue '''
-for iso in isos:
+        continue 
+
     for file in flood_files:
 
         try:
 
             flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
-            flooding = FloodProcess(path, iso, flood_tiff)
+            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
             flooding.process_flood_tiff()
             flooding.process_flood_shapefile()
 
-            wealths = WealthProcess(path, iso)
+            wealths = WealthProcess(path, countries['iso3'].loc[idx])
             #wealths.process_national_rwi()
             #wealths.process_regional_rwi()
 
-            coverages = CoverageProcess(path, iso)
+            coverages = CoverageProcess(path, countries['iso3'].loc[idx])
             #coverages.process_national_coverage()
             #coverages.process_regional_coverage()
 
-            intersection = IntersectLayers(iso, '3G', file)
+            intersection = IntersectLayers(countries['iso3'].loc[idx], '4G', file)
             intersection.pop_flood()
             intersection.pophaz_coverage()
             intersection.intersect_all()
@@ -68,3 +59,18 @@ for iso in isos:
         except:
 
             pass
+
+coastline = ['IDN', 'PHL', 'MEX', 'BRA', 'TUR', 'IND',
+             'PNG', 'ARG', 'MDG', 'MYS', 'CUB', 'VNM', 
+             'SOM', 'THA', 'COL', 'VEN', 'ZAF', 'UKR', 
+             'EGY', 'IRN', 'PER', 'ECU', 'ERI', 'MMR', 
+             'YEM', 'LBY', 'AGO', 'NAM', 'TZA', 'CRI', 
+             'DOM', 'TUN', 'PAK', 'JAM', 'LKA', 'DZA',
+             'CPV', 'NIC', 'GAB', 'NGA', 'HND', 'MRT', 
+             'TLS', 'URY', 'MDV', 'BGD', 'LBR', 'GHA',
+             'KEN', 'SEN', 'CIV', 'SEY', 'GUY', 'KHM',
+             'CMR', 'SLE', 'GTM', 'BLZ', 'ALB', 'BGR', 
+             'GNB', 'GIN', 'DJI', 'GEO', 'SLV', 'GNQ',
+             'MNE', 'LBN', 'STP', 'MUS', 'BRN', 'LCA', 
+             'DMA', 'BEN', 'GND', 'GMB', 'IRQ', 'TGO', 
+             'SVN', 'COD', 'BIH']
