@@ -22,7 +22,8 @@ income_group = ['LIC', 'LMC', 'UMC']
 
 for idx, country in countries.iterrows():
 
-    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1: 
+    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+        
         continue 
 
     country = ProcessCountry(path, countries['iso3'].loc[idx])

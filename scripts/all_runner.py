@@ -3,7 +3,8 @@ import os
 import tqdm
 import geopandas as gpd
 import pandas as pd
-from glanvup.floodzard import FloodProcess
+from glanvup.rizard import FloodProcess
+from glanvup.cozard import CoastProcess
 from glanvup.preprocess import WealthProcess
 from glanvup.coverage import CoverageProcess
 from glanvup.intersections import IntersectLayers
@@ -16,10 +17,13 @@ BASE_PATH = CONFIG['file_locations']['base_path']
 DATA_RAW = os.path.join(BASE_PATH, 'raw')
 DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 DATA_RESULTS = os.path.join(BASE_PATH, 'results')
+
 path = os.path.join(DATA_RAW, 'countries.csv')
 flood_folder = os.path.join(DATA_RAW, 'flood_hazard')
+coastal_folder = os.path.join(DATA_RAW, 'coastal_hazard')
 
 flood_files = os.listdir(flood_folder)
+coast_files = os.listdir(coastal_folder)
 
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
@@ -30,37 +34,38 @@ for idx, country in countries.iterrows():
                                      countries['iso3'].loc[idx], 
                                      'pop_hazard_coverage_poverty')
 
-    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1: 
+    #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:# 
+    if not country['iso3'] == 'SLV':
         continue 
 
     for file in flood_files:
 
         try:
+            #flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
+            coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
 
-            flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
+            #flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
+            #flooding.process_flood_tiff()
+            #flooding.process_flood_shapefile()
 
-            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
-            flooding.process_flood_tiff()
-            flooding.process_flood_shapefile()
-
-            wealths = WealthProcess(path, countries['iso3'].loc[idx])
+            #wealths = WealthProcess(path, countries['iso3'].loc[idx])
             #wealths.process_national_rwi()
             #wealths.process_regional_rwi()
 
-            coverages = CoverageProcess(path, countries['iso3'].loc[idx])
+            #coverages = CoverageProcess(path, countries['iso3'].loc[idx])
             #coverages.process_national_coverage()
             #coverages.process_regional_coverage()
 
-            intersection = IntersectLayers(countries['iso3'].loc[idx], '4G', file)
-            intersection.pop_flood()
-            intersection.pophaz_coverage()
-            intersection.intersect_all()
+            #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            #intersection.pop_cozard()
+            #intersection.popcozard_coverage()
+            #intersection.intersect_all_cozard()
 
         except:
 
             pass
 
-coastline = ['IDN', 'PHL', 'MEX', 'BRA', 'TUR', 'IND',
+coastlines = ['IDN','PHL', 'MEX', 'TUR', 'BIH', 'SVN',
              'PNG', 'ARG', 'MDG', 'MYS', 'CUB', 'VNM', 
              'SOM', 'THA', 'COL', 'VEN', 'ZAF', 'UKR', 
              'EGY', 'IRN', 'PER', 'ECU', 'ERI', 'MMR', 
@@ -73,4 +78,28 @@ coastline = ['IDN', 'PHL', 'MEX', 'BRA', 'TUR', 'IND',
              'GNB', 'GIN', 'DJI', 'GEO', 'SLV', 'GNQ',
              'MNE', 'LBN', 'STP', 'MUS', 'BRN', 'LCA', 
              'DMA', 'BEN', 'GND', 'GMB', 'IRQ', 'TGO', 
-             'SVN', 'COD', 'BIH']
+             'COD', 'COG', 'HTI', 'IND', 'BRA']
+
+for coast in coastlines:
+
+    intersected_files = os.path.join(DATA_RESULTS, coast, 
+                                'pop_cozard_coverage_poverty')
+
+    for file in coast_files:
+
+        try:
+
+            coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
+
+            coastal = CoastProcess(path, coast, coastal_tiff)
+            coastal.process_flood_tiff() 
+            coastal.process_flood_shapefile()
+
+            intersection = IntersectLayers(coast, '4G', file)
+            intersection.pop_cozard()
+            intersection.popcozard_coverage()
+            intersection.intersect_all_cozard()
+
+        except:
+
+            pass

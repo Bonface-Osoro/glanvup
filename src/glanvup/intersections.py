@@ -62,7 +62,8 @@ class IntersectLayers:
 
                             if firstfile in secondfile:
 
-                                intersection = gpd.overlay(first_gdf, second_gdf, how = 'intersection')
+                                intersection = gpd.overlay(first_gdf, second_gdf, 
+                                                           how = 'intersection')
                                 
                                 region_part = str(firstfile)
                                 
@@ -97,11 +98,37 @@ class IntersectLayers:
 
         return None
     
+    def pop_cozard(self):
+
+        population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'shapefiles')
+        flood_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'hazards', 'inuncoast', 'shapefiles')
+        folder_out_1 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_cozard')
+        if not os.path.exists(folder_out_1):
+
+            os.makedirs(folder_out_1)
+
+        intersection = IntersectLayers.intersect_layers(self, population_folder, flood_folder, folder_out_1)
+
+        return None
+    
     def pophaz_coverage(self):
 
         intersection_1_folder = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard')
         coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'coverage', 'regions', self.cell_gen)
         folder_out_2 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard_coverage')
+        if not os.path.exists(folder_out_2):
+
+            os.makedirs(folder_out_2)
+
+        intersection = IntersectLayers.intersect_layers(self, intersection_1_folder, coverage_folder, folder_out_2)
+
+        return None
+    
+    def popcozard_coverage(self):
+
+        intersection_1_folder = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_cozard')
+        coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'coverage', 'regions', self.cell_gen)
+        folder_out_2 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_cozard_coverage')
         if not os.path.exists(folder_out_2):
 
             os.makedirs(folder_out_2)
@@ -142,6 +169,56 @@ class IntersectLayers:
                                 filename = '{}_{}_{}'.format(cell_generation, flood_part, region_part)
 
                                 folder_out_3 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard_coverage_poverty')
+                                if not os.path.exists(folder_out_3):
+
+                                    os.makedirs(folder_out_3)
+                                    
+                                path_out = os.path.join(folder_out_3, filename)
+
+                                intersection.to_file(path_out, driver = 'ESRI Shapefile')
+                                
+                            else:
+
+                                print('Skipping population, poverty and coverage intersection...missing data')
+            except:
+
+                pass
+
+        return None
+
+
+    def intersect_all_cozard(self):
+
+        intersection_2_folder = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_cozard_coverage')
+        rwi_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'rwi', 'regions')
+
+        for firstfile in os.listdir(intersection_2_folder):
+            
+            try:
+
+                if firstfile.endswith('.shp'):
+
+                    first_shapefile = os.path.join(intersection_2_folder, firstfile)
+                    first_gdf = gpd.read_file(first_shapefile)
+
+                    for secondfile in os.listdir(rwi_folder):
+
+                        if secondfile.endswith('.shp'):
+
+                            second_shapefile = os.path.join(rwi_folder, secondfile)
+                            second_gdf = gpd.read_file(second_shapefile)
+
+                            if firstfile in secondfile:
+
+                                intersection = gpd.overlay(first_gdf, second_gdf, how = 'intersection')
+                                
+                                cell_generation = str(self.cell_gen)
+                                region_part = str(firstfile)
+                                flood_part = str(self.flood_file).strip('.tif')
+                                
+                                filename = '{}_{}_{}'.format(cell_generation, flood_part, region_part)
+
+                                folder_out_3 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_cozard_coverage_poverty')
                                 if not os.path.exists(folder_out_3):
 
                                     os.makedirs(folder_out_3)
