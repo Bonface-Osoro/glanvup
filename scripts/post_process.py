@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import configparser
 import time
+import shutil
 import warnings
 pd.options.mode.chained_assignment = None
 
@@ -46,7 +47,7 @@ oceania = ['ASM', 'AUS', 'COK', 'FJI', 'PYF', 'GUM', 'KIR', 'MHL', 'FSM',
            'NRU', 'NCL', 'NZL', 'NIU', 'NFK', 'MNP', 'PLW', 'PNG', 'PCN', 
            'WSM', 'SLB', 'TKL', 'TON', 'TUV', 'UMI', 'VUT', 'WLF']
 
-def global_average(metric):
+def global_average(metric, hazard):
     '''
     This function averages all the individual 
     vulnerable population into a single file. 
@@ -54,8 +55,9 @@ def global_average(metric):
 
     Parameters
     ----------
-    iso3 : string
-        Country ISO code
+    hazard : string
+        Hazard quantified: i.e `riverine`, `coastal`
+        or `tropical`.
     metric : string
         Attribute being quantified. It can be area, 
         flood depth or population under flooding
@@ -67,7 +69,7 @@ def global_average(metric):
 
     for iso3 in isos:
 
-        csv_path = os.path.join(DATA_RESULTS, iso3, 'csv_files')
+        csv_path = os.path.join(DATA_RESULTS, iso3, '{}_csv_files'.format(hazard))
 
         # Iterate over the folders
         for root, _, files in os.walk(csv_path):
@@ -112,7 +114,7 @@ def global_average(metric):
             
                     combined_df = pd.concat([combined_df, df], ignore_index = True)
                     
-                    fileout = '{}_{}_results.csv'.format(metric, metric)
+                    fileout = '{}_{}_results.csv'.format(hazard, metric)
                     folder_out = os.path.join(BASE_PATH, 'global_results')
 
                     if not os.path.exists(folder_out):
@@ -124,7 +126,6 @@ def global_average(metric):
 
     return None
 
-
-global_average('population')
-global_average('area')
-global_average('flood')
+global_average('population', 'coastal')
+global_average('area', 'coastal')
+global_average('flood', 'coastal')

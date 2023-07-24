@@ -76,7 +76,7 @@ def generate_aggregate_csv(intersect_folder, iso3):
 
     fileout = '{}_aggregated_results.csv'.format(iso3, 
                                                  merged_shapefile).replace('shp', '_')
-    folder_out = os.path.join(DATA_RESULTS, iso3, 'csv_files')
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'riverine_csv_files')
 
     if not os.path.exists(folder_out):
 
@@ -98,7 +98,7 @@ def generate_averages(iso3):
     """
 
     path_in = os.path.join(
-        DATA_RESULTS, iso3, 'csv_files', 
+        DATA_RESULTS, iso3, 'riverine_csv_files', 
         '{}_aggregated_results.csv'.format(iso3))
     
     df = pd.read_csv(path_in)
@@ -122,7 +122,7 @@ def generate_averages(iso3):
     fileout_4 = '{}_aggregated_results.csv'.format(iso3)
 
     folder_out = os.path.join(DATA_RESULTS, iso3, 
-                              'csv_files')
+                              'riverine_csv_files')
 
     if not os.path.exists(folder_out):
 
@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
     folders = os.path.join(DATA_RESULTS)
     isos = os.listdir(folders)
-    isos = ['TGO']
+    
     for iso in isos:
 
         try:

@@ -38,7 +38,7 @@ def generate_aggregate_csv(intersect_folder, iso3):
             shapefile = gpd.read_file(file_path)
 
             shapefile[['scenario', 'period', 'technology']] = ''
-            scenarios = ['historical', 'rcp4p5','rcp8p5']
+            scenarios = ['historical', 'rcp4p5', 'rcp8p5']
             periods = ['rp0100', 'rp1000']
             technologies = ['GSM', '3G', '4G']
 
@@ -73,9 +73,9 @@ def generate_aggregate_csv(intersect_folder, iso3):
                                           shapefile], 
                                           ignore_index = True)           
 
-    fileout = '{}_coastal_aggregated_results.csv'.format(iso3, 
+    fileout = '{}_aggregated_results.csv'.format(iso3, 
                                                  merged_shapefile).replace('shp', '_')
-    folder_out = os.path.join(DATA_RESULTS, iso3, 'csv_files')
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'coastal_csv_files')
 
     if not os.path.exists(folder_out):
 
@@ -97,8 +97,8 @@ def generate_averages(iso3):
     """
 
     path_in = os.path.join(
-        DATA_RESULTS, iso3, 'csv_files', 
-        '{}_coastal_aggregated_results.csv'.format(iso3))
+        DATA_RESULTS, iso3, 'coastal_csv_files', 
+        '{}_aggregated_results.csv'.format(iso3))
     
     df = pd.read_csv(path_in)
     
@@ -115,13 +115,13 @@ def generate_averages(iso3):
     areas = df.groupby(['NAME_0', 'scenario', 'technology',
                         'period'])['area'].mean()
 
-    fileout = '{}_coastal_flood_average.csv'.format(iso3)
-    fileout_2 = '{}_coastal_population_average.csv'.format(iso3)
-    fileout_3 = '{}_coastal_area_average.csv'.format(iso3)
-    fileout_4 = '{}_coastal_aggregated_results.csv'.format(iso3)
+    fileout = '{}_flood_average.csv'.format(iso3)
+    fileout_2 = '{}_population_average.csv'.format(iso3)
+    fileout_3 = '{}_area_average.csv'.format(iso3)
+    fileout_4 = '{}_aggregated_results.csv'.format(iso3)
 
     folder_out = os.path.join(DATA_RESULTS, iso3, 
-                              'csv_files')
+                              'coastal_csv_files')
 
     if not os.path.exists(folder_out):
 
@@ -145,8 +145,6 @@ if __name__ == '__main__':
 
     folders = os.path.join(DATA_RESULTS)
     isos = os.listdir(folders)
-
-    isos = ['TGO']
     
     for iso in isos:
 
