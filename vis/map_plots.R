@@ -269,7 +269,11 @@ countries <- ggarrange(
   common.legend = T,
   legend = "bottom",
   labels = c('A', 'B', 'C', 'D', 'E', 'F')
+<<<<<<< HEAD
 ) + ggspatial::annotation_north_arrow(location = "br")
+=======
+)
+>>>>>>> 2329557a387955db56e444a9f01e44f47b13d3ad
 
 ###. save the combined image ###
 path = file.path(folder, "figures", "individual_countries.tiff")

@@ -35,18 +35,18 @@ for idx, country in countries.iterrows():
                                      'pop_hazard_coverage_poverty')
 
     #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:# 
-    if not country['iso3'] == 'SLV':
+    if not country['iso3'] == 'COG':
         continue 
 
     for file in flood_files:
 
         try:
-            #flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
+            flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
             coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
 
-            #flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
-            #flooding.process_flood_tiff()
-            #flooding.process_flood_shapefile()
+            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
+            flooding.process_flood_tiff()
+            flooding.process_flood_shapefile()
 
             #wealths = WealthProcess(path, countries['iso3'].loc[idx])
             #wealths.process_national_rwi()
@@ -56,10 +56,10 @@ for idx, country in countries.iterrows():
             #coverages.process_national_coverage()
             #coverages.process_regional_coverage()
 
-            #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            #intersection.pop_cozard()
-            #intersection.popcozard_coverage()
-            #intersection.intersect_all_cozard()
+            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            intersection.pop_flood()
+            intersection.pophaz_coverage()
+            intersection.intersect_all()
 
         except:
 
@@ -79,7 +79,7 @@ coastlines = ['IDN','PHL', 'MEX', 'TUR', 'BIH', 'SVN',
              'MNE', 'LBN', 'STP', 'MUS', 'BRN', 'LCA', 
              'DMA', 'BEN', 'GND', 'GMB', 'IRQ', 'TGO', 
              'COD', 'COG', 'HTI', 'IND', 'BRA']
-
+coastlines = []
 for coast in coastlines:
 
     intersected_files = os.path.join(DATA_RESULTS, coast, 
@@ -92,13 +92,13 @@ for coast in coastlines:
             coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
 
             coastal = CoastProcess(path, coast, coastal_tiff)
-            coastal.process_flood_tiff() 
-            coastal.process_flood_shapefile()
+            #coastal.process_flood_tiff() 
+            #coastal.process_flood_shapefile()
 
             intersection = IntersectLayers(coast, '4G', file)
-            intersection.pop_cozard()
-            intersection.popcozard_coverage()
-            intersection.intersect_all_cozard()
+            #intersection.pop_cozard()
+            #intersection.popcozard_coverage()
+            #intersection.intersect_all_cozard()
 
         except:
 
