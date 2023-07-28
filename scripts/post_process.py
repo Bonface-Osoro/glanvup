@@ -4,48 +4,13 @@ import configparser
 import time
 import shutil
 import warnings
+from glanvup.continents import asia, south_America, north_america, africa, europe 
 pd.options.mode.chained_assignment = None
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 DATA_RESULTS = os.path.join(BASE_PATH, 'results')
-
-asia = ['AFG', 'ARM', 'AZE', 'BHR', 'BGD', 'BTN', 'BRN', 'MMR', 'KHM', 
-        'CHN', 'CXR', 'CCK', 'IOT', 'GEO', 'HKG', 'IND', 'IDN', 'IRN', 
-        'IRQ', 'ISR', 'JPN', 'JOR', 'KAZ', 'PRK', 'KOR', 'KWT', 'KGZ', 
-        'LAO', 'LBN', 'MAC', 'MYS', 'MDV', 'MNG', 'OMN', 'NPL', 'PAK', 
-        'PSE', 'PHL', 'QAT', 'SAU', 'SGP', 'LKA', 'SYR', 'TWN', 'TJK', 
-        'THA', 'TUR', 'TKM', 'ARE', 'UZB', 'VNM', 'YEM', 'TLS']
-
-south_America = ['ARG', 'BOL', 'BRA', 'CHL', 'COL', 'ECU', 'GUY', 'PRY', 
-                 'PER', 'SUR', 'URY', 'VEN']
-
-north_america = ['ATG', 'BHS', 'BRB', 'BLZ', 'CAN', 'CRI', 'CUB', 'DMA', 
-                 'DOM', 'SLV', 'GTM', 'HTI', 'HND', 'JAM', 'MEX', 'NIC', 
-                 'PAN', 'KNA', 'LCA', 'VCT', 'TTO', 'USA', 'ABW', 'AIA', 
-                 'BMU', 'BES', 'VGB', 'CYM', 'CUB', 'CUW', 'DMA', 'DOM', 
-                 'GRD', 'GLP', 'GRL', 'MTQ', 'MSR', 'PRI', 'BES', 'BES', 
-                 'KNA', 'LCA', 'SPM', 'VCT', 'TTO', 'TCA', 'VIR']
-
-africa = ['DZA', 'AGO', 'BEN', 'BWA', 'BFA', 'BDI', 'CPV', 'CMR', 'CAF', 
-          'TCD', 'COM', 'COG', 'COD', 'DJI', 'EGY', 'GNQ', 'ERI', 'SWZ', 
-          'ETH', 'GAB', 'GMB', 'GHA', 'GIN', 'GNB', 'CIV', 'KEN', 'LSO', 
-          'LBR', 'LBY', 'MDG', 'MWI', 'MLI', 'MRT', 'MUS', 'MAR', 'MOZ',
-          'NAM', 'NER', 'NGA', 'RWA', 'STP', 'SEN', 'SYC', 'SLE', 'SOM', 
-          'ZAF', 'SSD', 'SDN', 'TZA', 'TGO', 'TUN', 'UGA', 'ZMB', 'ZWE']
-
-europe = ['ALB', 'AND', 'AUT', 'BLR', 'BEL', 'BIH', 'BGR', 'HRV', 'CYP', 
-          'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'GEO', 'DEU', 'GRC', 'HUN', 
-          'ISL', 'IRL', 'ITA', 'KAZ', 'KOS', 'LVA', 'LIE', 'LTU', 'LUX', 
-          'MKD', 'MLT', 'MDA', 'MCO', 'MNE', 'NLD', 'NOR', 'POL', 'PRT', 
-          'ROU', 'RUS', 'SMR', 'SRB', 'SVK', 'SVN', 'ESP', 'SWE', 'CHE', 
-          'UKR', 'GBR', 'VAT', 'ALA', 'FRO', 'GIB', 'GGY', 'IMN', 'JEY', 
-          'SJM']
-
-oceania = ['ASM', 'AUS', 'COK', 'FJI', 'PYF', 'GUM', 'KIR', 'MHL', 'FSM', 
-           'NRU', 'NCL', 'NZL', 'NIU', 'NFK', 'MNP', 'PLW', 'PNG', 'PCN', 
-           'WSM', 'SLB', 'TKL', 'TON', 'TUV', 'UMI', 'VUT', 'WLF']
 
 def global_average(metric, hazard):
     '''
@@ -126,6 +91,13 @@ def global_average(metric, hazard):
 
     return None
 
-global_average('population', 'coastal')
-global_average('area', 'coastal')
-global_average('flood', 'coastal')
+
+if __name__ == '__main__':
+
+    hazards = ['riverine', 'coastal']
+
+    for hazard in hazards:
+
+        global_average('population', hazard)
+        global_average('area', hazard)
+        global_average('flood', hazard)

@@ -82,7 +82,7 @@ def generate_aggregate_csv(intersect_folder, iso3):
         os.makedirs(folder_out)
 
     path_out = os.path.join(folder_out, fileout)
-
+    
     merged_shapefile.to_csv(path_out, index = False)
     
     return None
@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
     folders = os.path.join(DATA_RESULTS)
     isos = os.listdir(folders)
-    
+
     for iso in isos:
 
         try:
