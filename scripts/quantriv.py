@@ -27,7 +27,7 @@ def generate_aggregate_csv(intersect_folder, iso3):
         Country ISO3 code
     """
     
-    print('processing coastal flooding {} csv'.format(iso3))
+    print('processing {} csv'.format(iso3))
     merged_shapefile = gpd.GeoDataFrame()
 
     for file_name in os.listdir(intersect_folder):
@@ -39,7 +39,7 @@ def generate_aggregate_csv(intersect_folder, iso3):
 
             shapefile[['scenario', 'period', 'technology']] = ''
             scenarios = ['historical', 'rcp4p5','rcp8p5']
-            periods = ['rp0100', 'rp1000']
+            periods = ['rp00100', 'rp01000']
             technologies = ['GSM', '3G', '4G']
 
             for i in range(len(shapefile)):
@@ -68,14 +68,15 @@ def generate_aggregate_csv(intersect_folder, iso3):
 
             shapefile = shapefile.to_crs(crs = 3857) 
             shapefile['area'] = shapefile.geometry.area
+            shapefile = shapefile.drop(['geometry'], axis = 1)
 
             merged_shapefile = pd.concat([merged_shapefile, 
                                           shapefile], 
                                           ignore_index = True)           
 
-    fileout = '{}_coastal_aggregated_results.csv'.format(iso3, 
+    fileout = '{}_aggregated_results.csv'.format(iso3, 
                                                  merged_shapefile).replace('shp', '_')
-    folder_out = os.path.join(DATA_RESULTS, iso3, 'csv_files')
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'riverine_csv_files')
 
     if not os.path.exists(folder_out):
 
@@ -97,12 +98,12 @@ def generate_averages(iso3):
     """
 
     path_in = os.path.join(
-        DATA_RESULTS, iso3, 'csv_files', 
-        '{}_coastal_aggregated_results.csv'.format(iso3))
+        DATA_RESULTS, iso3, 'riverine_csv_files', 
+        '{}_aggregated_results.csv'.format(iso3))
     
     df = pd.read_csv(path_in)
     
-    print('Calculating coastal flood average for {}'.format(iso3))
+    print('Calculating flood average for {}'.format(iso3))
 
     df = df.fillna('GSM')
 
@@ -115,13 +116,13 @@ def generate_averages(iso3):
     areas = df.groupby(['NAME_0', 'scenario', 'technology',
                         'period'])['area'].mean()
 
-    fileout = '{}_coastal_flood_average.csv'.format(iso3)
-    fileout_2 = '{}_coastal_population_average.csv'.format(iso3)
-    fileout_3 = '{}_coastal_area_average.csv'.format(iso3)
-    fileout_4 = '{}_coastal_aggregated_results.csv'.format(iso3)
+    fileout = '{}_flood_average.csv'.format(iso3)
+    fileout_2 = '{}_population_average.csv'.format(iso3)
+    fileout_3 = '{}_area_average.csv'.format(iso3)
+    fileout_4 = '{}_aggregated_results.csv'.format(iso3)
 
     folder_out = os.path.join(DATA_RESULTS, iso3, 
-                              'csv_files')
+                              'riverine_csv_files')
 
     if not os.path.exists(folder_out):
 
@@ -145,14 +146,12 @@ if __name__ == '__main__':
 
     folders = os.path.join(DATA_RESULTS)
     isos = os.listdir(folders)
-
-    isos = ['TGO']
     
     for iso in isos:
 
         try:
 
-            folder = os.path.join(folders, iso, 'pop_cozard_coverage_poverty')
+            folder = os.path.join(folders, iso, 'pop_hazard_coverage_poverty')
             generate_aggregate_csv(folder, iso)
             generate_averages(iso)
 

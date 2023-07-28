@@ -166,7 +166,8 @@ class IntersectLayers:
                                 region_part = str(firstfile)
                                 flood_part = str(self.flood_file).strip('.tif')
                                 
-                                filename = '{}_{}_{}'.format(cell_generation, flood_part, region_part)
+                                filename = '{}_{}'.format(flood_part, region_part)
+                                #filename = '{}_{}_{}'.format(cell_generation, flood_part, region_part)
 
                                 folder_out_3 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard_coverage_poverty')
                                 if not os.path.exists(folder_out_3):
