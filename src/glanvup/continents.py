@@ -42,7 +42,7 @@ africa_coast = ['SOM', 'ZAF', 'EGY', 'LBY', 'AGO', 'NAM', 'TZA', 'TUN',
                 'GAB', 'NGA', 'MRT', 'LBR', 'GHA', 'KEN', 'SEN', 'CIV',
                 'CMR', 'SLE', 'SEY', 'GNB', 'GIN', 'DJI', 'GNQ', 'COD', 
                 'COG', 'GMB', 'TGO', 'MDG', 'BEN', 'ERI', 'CPV', 'STP',
-                'DZA', 'MOZ', 'NAM']
+                'DZA', 'MOZ', 'NAM', 'MAR']
 
 europe_coast = ['UKR', 'BGR', 'ALB', 'MNE', 'GEO', 'SVN', 'TUR']
 
