@@ -35,7 +35,7 @@ for idx, country in countries.iterrows():
                                      'pop_hazard_coverage_poverty')
 
     #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:# 
-    if not country['iso3'] == 'COG':
+    if not country['iso3'] == 'BDI':
         continue 
 
     for file in flood_files:
@@ -56,30 +56,16 @@ for idx, country in countries.iterrows():
             #coverages.process_national_coverage()
             #coverages.process_regional_coverage()
 
-            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            intersection.pop_flood()
-            intersection.pophaz_coverage()
-            intersection.intersect_all()
+            #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            #intersection.pop_flood()
+            #intersection.pophaz_coverage()
+            #intersection.intersect_all()
 
         except:
 
             pass
 
-coastlines = ['IDN','PHL', 'MEX', 'TUR', 'BIH', 'SVN',
-             'PNG', 'ARG', 'MDG', 'MYS', 'CUB', 'VNM', 
-             'SOM', 'THA', 'COL', 'VEN', 'ZAF', 'UKR', 
-             'EGY', 'IRN', 'PER', 'ECU', 'ERI', 'MMR', 
-             'YEM', 'LBY', 'AGO', 'NAM', 'TZA', 'CRI', 
-             'DOM', 'TUN', 'PAK', 'JAM', 'LKA', 'DZA',
-             'CPV', 'NIC', 'GAB', 'NGA', 'HND', 'MRT', 
-             'TLS', 'URY', 'MDV', 'BGD', 'LBR', 'GHA',
-             'KEN', 'SEN', 'CIV', 'SEY', 'GUY', 'KHM',
-             'CMR', 'SLE', 'GTM', 'BLZ', 'ALB', 'BGR', 
-             'GNB', 'GIN', 'DJI', 'GEO', 'SLV', 'GNQ',
-             'MNE', 'LBN', 'STP', 'MUS', 'BRN', 'LCA', 
-             'DMA', 'BEN', 'GND', 'GMB', 'IRQ', 'TGO', 
-             'COD', 'COG', 'HTI', 'IND', 'BRA']
-coastlines = []
+coastlines = ['MOZ']
 for coast in coastlines:
 
     intersected_files = os.path.join(DATA_RESULTS, coast, 
@@ -92,13 +78,13 @@ for coast in coastlines:
             coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
 
             coastal = CoastProcess(path, coast, coastal_tiff)
-            #coastal.process_flood_tiff() 
-            #coastal.process_flood_shapefile()
+            coastal.process_flood_tiff() 
+            coastal.process_flood_shapefile()
 
-            intersection = IntersectLayers(coast, '4G', file)
-            #intersection.pop_cozard()
-            #intersection.popcozard_coverage()
-            #intersection.intersect_all_cozard()
+            intersection = IntersectLayers(coast, '3G', file)
+            intersection.pop_cozard()
+            intersection.popcozard_coverage()
+            intersection.intersect_all_cozard()
 
         except:
 

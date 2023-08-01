@@ -33,3 +33,20 @@ europe = ['ALB', 'AND', 'AUT', 'BLR', 'BEL', 'BIH', 'BGR', 'HRV', 'CYP',
 oceania = ['ASM', 'AUS', 'COK', 'FJI', 'PYF', 'GUM', 'KIR', 'MHL', 'FSM', 
            'NRU', 'NCL', 'NZL', 'NIU', 'NFK', 'MNP', 'PLW', 'PNG', 'PCN', 
            'WSM', 'SLB', 'TKL', 'TON', 'TUV', 'UMI', 'VUT', 'WLF']
+
+asia_coast = ['IDN','PHL', 'BIH', 'PNG', 'MYS', 'VNM', 'THA', 'IRN', 'MMR', 
+             'YEM', 'PAK', 'LKA', 'TLS', 'MDV', 'BGD', 'KHM', 'LBN', 'BRN',  
+             'GND', 'IRQ', 'IND']
+
+africa_coast = ['SOM', 'ZAF', 'EGY', 'LBY', 'AGO', 'NAM', 'TZA', 'TUN',
+                'GAB', 'NGA', 'MRT', 'LBR', 'GHA', 'KEN', 'SEN', 'CIV',
+                'CMR', 'SLE', 'SEY', 'GNB', 'GIN', 'DJI', 'GNQ', 'COD', 
+                'COG', 'GMB', 'TGO', 'MDG', 'BEN', 'ERI', 'CPV', 'STP',
+                'DZA', 'MOZ', 'NAM']
+
+europe_coast = ['UKR', 'BGR', 'ALB', 'MNE', 'GEO', 'SVN', 'TUR']
+
+north_coast = ['CUB', 'CRI', 'JAM', 'HND', 'GTM', 'SLV', 'GRD', 'LCA',
+                 'BLZ', 'HTI', 'DMA', 'MEX', 'DOM', 'NIC', 'MUS',]
+
+south_coast = ['ARG', 'COL', 'VEN', 'PER', 'ECU', 'URY', 'GUY', 'BRA']
