@@ -13,7 +13,7 @@ Such a topic is worthy of investigation as the analytics produced help inform un
 
 Methodology
 ==============
-The method (see Figure 1) will utilize 47 million OpenCelliD data points to inform 2G, 3G, 4G and 5G coverage. Income estimates for low and middle income countries will be utilized for poverty estimation at the 1 km2 level (Chi et al., 2022). Additionally, multiple hazard models will be utilized, for flooding from the World Resource Institute Aqueduct platform, and for tropical cyclones from recently developed maximum wind speed estimates. Hazard impacts will be compared for a historical scenario (1980) and compared to a worst-case (RCP8.5) representing no emissions abatement, for different event probabilities. 
+The method (see `Figure 1`) will utilize 47 million OpenCelliD data points to inform 2G, 3G, 4G and 5G coverage. Income estimates for low and middle income countries will be utilized for poverty estimation at the 1 km2 level (Chi et al., 2022). Additionally, multiple hazard models will be utilized, for flooding from the World Resource Institute Aqueduct platform, and for tropical cyclones from recently developed maximum wind speed estimates. Hazard impacts will be compared for a historical scenario (1980) and compared to a worst-case (RCP8.5) representing no emissions abatement, for different event probabilities. 
 
 ## Method Box
 
@@ -30,4 +30,12 @@ The results are based on the data for historical baseline from 1980 and the Repr
 
 [2]	“Open Spatial Demographic Data and Research,” WorldPop. https://www.worldpop.org/ (accessed May 08, 2023).
 
-[3] Country metadafile. Contained in `/data/countries.csv`
+[3]	GADM, “Global Administrative Areas Boundaries.” https://gadm.org/download_world.html (accessed Sep. 14, 2022).
+
+[4]	“MOBILE COVERAGE Explorer,” CollinsBartholomew. https://www.collinsbartholomew.com/mobile-coverage-maps/mobile-coverage-explorer/ (accessed Jul. 26, 2023).
+
+[5]	“Relative Wealth Index - Humanitarian Data Exchange.” https://data.humdata.org/dataset/relative-wealth-index (accessed Jul. 26, 2023)
+
+[6]	N. Bloemendaal, I. D. (Ivan) Haigh, H. (Hans) de Moel, S. Muis, R. J. (Reindert) Haarsma, and J. C. J. H. (Jeroen) Aerts, “STORM IBTrACS present climate synthetic tropical cyclone tracks.” 4TU.Centre for Research Data, Sep. 30, 2020. doi: 10.4121/UUID:82C1DC0D-5485-43D8-901A-CE7F26CDA35D.
+
+[7] Country metadafile. Contained in `/data/countries.csv`
