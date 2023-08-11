@@ -41,49 +41,6 @@ class IntersectLayers:
         self.cell_gen = cell_gen
         self.flood_file = flood_file
 
-
-    def intersect_layers(self, folder_1, folder_2, folder_out):
-
-        for firstfile in os.listdir(folder_1):
-            
-            try:
-
-                if firstfile.endswith('.shp'):
-
-                    first_shapefile = os.path.join(folder_1, firstfile)
-                    first_gdf = gpd.read_file(first_shapefile)
-
-                    for secondfile in os.listdir(folder_2):
-
-                        if secondfile.endswith('.shp'):
-
-                            second_shapefile = os.path.join(folder_2, secondfile)
-                            second_gdf = gpd.read_file(second_shapefile)
-
-                            if firstfile in secondfile:
-
-                                intersection = gpd.overlay(first_gdf, second_gdf, 
-                                                           how = 'intersection')
-                                
-                                region_part = str(firstfile)
-                                
-                                if not os.path.exists(folder_out):
-
-                                    os.makedirs(folder_out)
-
-                                path_out = os.path.join(folder_out, region_part)
-
-                                intersection.to_file(path_out, driver = 'ESRI Shapefile')
-                                
-                            else:
-
-                                print('No Matching shapefile found for {}. Skipping...'.format(self.country_iso3))
-            except:
-
-                pass
-
-
-        return None
     
     def pop_flood(self):
 
@@ -94,7 +51,46 @@ class IntersectLayers:
 
             os.makedirs(folder_out_1)
 
-        intersection = IntersectLayers.intersect_layers(self, population_folder, flood_folder, folder_out_1)
+        IntersectLayers.intersect_layers(self, population_folder, flood_folder, folder_out_1)
+
+        return None
+    
+    def river_hazard(self):
+
+        population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'shapefiles')
+        flood_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'hazards', 'inunriver', 'shapefiles')
+        folder_out_1 = os.path.join(DATA_RESULTS, self.country_iso3, 'vul_river_hazard')
+        if not os.path.exists(folder_out_1):
+
+            os.makedirs(folder_out_1)
+
+        IntersectLayers.intersect_rico(self, population_folder, flood_folder, folder_out_1)
+
+        return None
+    
+    def coast_hazard(self):
+
+        population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'shapefiles')
+        flood_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'hazards', 'inuncoast', 'shapefiles')
+        folder_out_1 = os.path.join(DATA_RESULTS, self.country_iso3, 'vul_coast_hazard')
+        if not os.path.exists(folder_out_1):
+
+            os.makedirs(folder_out_1)
+
+        IntersectLayers.intersect_rico(self, population_folder, flood_folder, folder_out_1)
+
+        return None
+    
+    def pop_coverage(self):
+
+        population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'shapefiles')
+        coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'coverage', 'regions', self.cell_gen)
+        folder_out_1 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_unconnected')
+        if not os.path.exists(folder_out_1):
+
+            os.makedirs(folder_out_1)
+
+        IntersectLayers.intersect_coverage(self, population_folder, coverage_folder, folder_out_1)
 
         return None
     
@@ -107,7 +103,7 @@ class IntersectLayers:
 
             os.makedirs(folder_out_1)
 
-        intersection = IntersectLayers.intersect_layers(self, population_folder, flood_folder, folder_out_1)
+        IntersectLayers.intersect_layers(self, population_folder, flood_folder, folder_out_1)
 
         return None
     
@@ -120,7 +116,7 @@ class IntersectLayers:
 
             os.makedirs(folder_out_2)
 
-        intersection = IntersectLayers.intersect_layers(self, intersection_1_folder, coverage_folder, folder_out_2)
+        IntersectLayers.intersect_layers(self, intersection_1_folder, coverage_folder, folder_out_2)
 
         return None
     
@@ -133,7 +129,7 @@ class IntersectLayers:
 
             os.makedirs(folder_out_2)
 
-        intersection = IntersectLayers.intersect_layers(self, intersection_1_folder, coverage_folder, folder_out_2)
+        IntersectLayers.intersect_layers(self, intersection_1_folder, coverage_folder, folder_out_2)
 
         return None
     
@@ -236,7 +232,142 @@ class IntersectLayers:
                 pass
 
         return None
+    def intersect_layers(self, folder_1, folder_2, folder_out):
 
+        for firstfile in os.listdir(folder_1):
+            
+            try:
+
+                if firstfile.endswith('.shp'):
+
+                    first_shapefile = os.path.join(folder_1, firstfile)
+                    first_gdf = gpd.read_file(first_shapefile)
+
+                    for secondfile in os.listdir(folder_2):
+
+                        if secondfile.endswith('.shp'):
+
+                            second_shapefile = os.path.join(folder_2, secondfile)
+                            second_gdf = gpd.read_file(second_shapefile)
+
+                            if firstfile in secondfile:
+
+                                intersection = gpd.overlay(first_gdf, second_gdf, 
+                                                           how = 'intersection')
+                                
+                                region_part = str(firstfile)
+                                
+                                if not os.path.exists(folder_out):
+
+                                    os.makedirs(folder_out)
+
+                                path_out = os.path.join(folder_out, region_part)
+
+                                intersection.to_file(path_out, driver = 'ESRI Shapefile')
+                                
+                            else:
+
+                                print('No Matching shapefile found for {}. Skipping...'.format(self.country_iso3))
+            except:
+
+                pass
+
+
+        return None
+    
+    
+    def intersect_coverage(self, folder_1, folder_2, folder_out):
+
+        print('Processing coverage results {}'.format(self.country_iso3))
+        for firstfile in os.listdir(folder_1):
+            
+            try:
+
+                if firstfile.endswith('.shp'):
+
+                    first_shapefile = os.path.join(folder_1, firstfile)
+                    first_gdf = gpd.read_file(first_shapefile)
+
+                    for secondfile in os.listdir(folder_2):
+
+                        if secondfile.endswith('.shp'):
+
+                            second_shapefile = os.path.join(folder_2, secondfile)
+                            second_gdf = gpd.read_file(second_shapefile)
+
+                            if firstfile in secondfile:
+
+                                intersection = gpd.overlay(first_gdf, second_gdf, 
+                                                           how = 'intersection')
+                                
+                                region_part = str(firstfile)
+                                cell_type = str(self.cell_gen)
+                        
+                                filename = cell_type + '_{}'.format(region_part)
+                                
+                                if not os.path.exists(folder_out):
+
+                                    os.makedirs(folder_out)
+
+                                path_out = os.path.join(folder_out, filename)
+
+                                intersection.to_file(path_out, driver = 'ESRI Shapefile')
+                                
+                            else:
+
+                                print('Processing coverage results {}'.format(self.country_iso3))
+            except:
+
+                pass
+
+
+        return None
+
+
+    def intersect_rico(self, folder_1, folder_2, folder_out):
+
+        for firstfile in os.listdir(folder_1):
+            
+            try:
+
+                if firstfile.endswith('.shp'):
+
+                    first_shapefile = os.path.join(folder_1, firstfile)
+                    first_gdf = gpd.read_file(first_shapefile)
+
+                    for secondfile in os.listdir(folder_2):
+
+                        if secondfile.endswith('.shp'):
+
+                            second_shapefile = os.path.join(folder_2, secondfile)
+                            second_gdf = gpd.read_file(second_shapefile)
+
+                            if firstfile in secondfile:
+
+                                intersection = gpd.overlay(first_gdf, second_gdf, 
+                                                        how = 'intersection')
+                                
+                                region_part = str(firstfile)
+                                flood_part = str(self.flood_file).strip('.tif')
+                                filename = flood_part + '_{}'.format(region_part)
+
+                                if not os.path.exists(folder_out):
+
+                                    os.makedirs(folder_out)
+
+                                path_out = os.path.join(folder_out, filename)
+
+                                intersection.to_file(path_out, driver = 'ESRI Shapefile')
+                            
+                        else:
+
+                            print('Intersecting population and flood layers for {}'.format(self.country_iso3))
+            except:
+
+                pass
+
+
+        return None
 
 '''if __name__ == '__main__':
 

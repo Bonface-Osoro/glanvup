@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
     folders = os.path.join(DATA_RESULTS)
     isos = os.listdir(folders)
-    isos = ['MOZ']
+    
     for iso in isos:
 
         try:

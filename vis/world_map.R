@@ -12,7 +12,7 @@ library(ggimage)
 
 suppressMessages(library(tidyverse))
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
-africa_basemap <- st_read(file.path(folder, '..', 'data', 'global_results', 'Africa_Boundaries', 'World_Countries.shp'))
+africa_basemap <- st_read(file.path(folder, '..', 'data', 'global_results', 'Africa_Boundaries', 'afr_g2014_2013_0.shp'))
 
 shapefile_folder <- file.path(folder, '..', 'data', 'global_results', 'shapefiles', 'Africa')
 shapefile_list <- list.files(shapefile_folder, pattern = ".shp$", full.names = TRUE)
