@@ -1,9 +1,7 @@
 import os
-import pandas as pd
 import configparser
-import time
-import shutil
 import warnings
+import pandas as pd
 from glanvup.continents import asia, south_America, north_america, africa, europe, oceania 
 from glanvup.continents import east_asia_pacific, europe_central_asia, latin_and_caribbean
 from glanvup.continents import middle_north_africa, sub_saharan_africa, north_america_reg
@@ -39,7 +37,6 @@ def global_average(metric, hazard):
 
         csv_path = os.path.join(DATA_RESULTS, iso3, '{}_csv_files'.format(hazard))
 
-        # Iterate over the folders
         for root, _, files in os.walk(csv_path):
 
             for file in files:
@@ -114,15 +111,14 @@ def global_vulnerable(metric, hazard):
     '''
 
     isos = os.listdir(DATA_RESULTS)
+
     combined_df = pd.DataFrame()
-    isos = ['BDI', 'BWA']
 
     for iso3 in isos:
         
         print('Processing continent, region and income for {} {} csv file'.format(iso3, hazard))
         csv_path = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
 
-        # Iterate over the folders
         for root, _, files in os.walk(csv_path):
 
             for file in files:
@@ -131,6 +127,8 @@ def global_vulnerable(metric, hazard):
 
                     file_path = os.path.join(root, file)
                     df = pd.read_csv(file_path)
+                    columns_to_round = ['value_1', 'value_2', 'area']
+                    df[columns_to_round] = df[columns_to_round].round(4)
                     df['continent'] = ''
 
                     for i in range(len(df)):
@@ -167,7 +165,7 @@ def global_vulnerable(metric, hazard):
                         if iso3 in sub_saharan_africa:
 
                             df['region'].loc[i] = 'SSA'
-
+                            
                         elif iso3 in east_asia_pacific:
 
                             df['region'].loc[i] = 'EAP'
@@ -212,7 +210,7 @@ def global_vulnerable(metric, hazard):
             
                     combined_df = pd.concat([combined_df, df], ignore_index = True)
                     
-                    fileout = 'vulnerable_{}_{}_results.csv'.format(hazard, metric)
+                    fileout = 'vulnerable_{}_results.csv'.format(hazard)
                     folder_out = os.path.join(BASE_PATH, 'global_results')
 
                     if not os.path.exists(folder_out):
@@ -245,7 +243,6 @@ def global_unconnected():
 
             csv_path = os.path.join(DATA_RESULTS, iso3, 'unconnected_csv_files')
 
-            # Iterate over the folders
             for root, _, files in os.walk(csv_path):
 
                 for file in files:
@@ -351,15 +348,12 @@ def global_unconnected():
 
 
 if __name__ == '__main__':
-
-    hazards = ['riverine', 'coastal']
-
+    
     global_unconnected()
+    hazards = ['riverine', 'coastal']
 
     for hazard in hazards:
 
-        #global_average('population', hazard)
-        #global_average('area', hazard)
-        #global_average('flood', hazard)
-        #global_vulnerable('riverine', hazard)
-        pass
+        global_average('population', hazard)
+        global_average('area', hazard)
+        global_vulnerable('riverine', hazard)

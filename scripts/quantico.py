@@ -87,6 +87,7 @@ def generate_aggregate_csv(intersect_folder, iso3):
     
     return None
 
+
 def generate_averages(iso3):
     """
     This function calculates the average number of people 
@@ -138,6 +139,7 @@ def generate_averages(iso3):
     df.to_csv(path_out_4)
     
     return print('Averaging completed for {}'.format(iso3))
+
 
 if __name__ == '__main__':
 

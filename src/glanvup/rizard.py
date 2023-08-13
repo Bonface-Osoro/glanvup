@@ -47,56 +47,43 @@ class FloodProcess:
 
                 continue   
             
-            #define our country-specific parameters, including gid information
             iso3 = country['iso3']
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
 
-            
-            #set the filename depending our preferred regional level
             filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
             folder = os.path.join('data','processed', iso3, 'regions')
             
-            #then load in our regions as a geodataframe
             path_regions = os.path.join(folder, filename)
             regions = gpd.read_file(path_regions, crs = 'epsg:4326')
             
             for idx, region in regions.iterrows():
 
-                #get our gid id for this region 
-                #(which depends on the country-specific gid level)
                 gid_id = region[gid_level]
                 gid_name = region['NAME_1']
                 
                 print('Working on {} flooding layers'.format(gid_name))
-                
-                #let's load in our hazard layer
+
                 filename = self.flood_tiff
                 path_hazard = os.path.join(filename)
                 hazard = rasterio.open(path_hazard, 'r+')
                 hazard.nodata = 255                       
                 hazard.crs.from_epsg(4326)                
 
-                #create a new gpd dataframe from our single region geometry
                 geo = gpd.GeoDataFrame(gpd.GeoSeries(region.geometry))
 
-                #this line sets geometry for resulting geodataframe
                 geo = geo.rename(columns = {0:'geometry'}).set_geometry('geometry')
 
-                #convert to json
                 coords = [json.loads(geo.to_json())['features'][0]['geometry']] 
                 
-                #carry out the clip using our mask
                 out_img, out_transform = mask(hazard, coords, crop = True)
 
-                #update our metadata
                 out_meta = hazard.meta.copy()
 
                 out_meta.update({'driver': 'GTiff', 'height': out_img.shape[1],
                                 'width': out_img.shape[2], 'transform': out_transform,
                                 'crs': 'epsg:4326'})
 
-                #now we write out at the regional level
                 filename_out = '{}.tif'.format(gid_id) 
                 folder_out = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
 
@@ -112,6 +99,7 @@ class FloodProcess:
             print('Processing complete for {}'.format(iso3))
         
         return None 
+
 
     def process_flood_shapefile(self):
 

@@ -1,6 +1,6 @@
-import configparser
 import os
 import warnings
+import configparser
 import geopandas as gpd
 import pandas as pd
 pd.options.mode.chained_assignment = None
@@ -21,7 +21,6 @@ class IntersectLayers:
     This class intersect all the processed layers.
     """
 
-
     def __init__(self, country_iso3, cell_gen, flood_file):
         """
         A class constructor
@@ -30,7 +29,7 @@ class IntersectLayers:
         ---------
         country_iso3 : string
             Country iso3 to be processed..
-        cell_generation : string
+        cell_gen : string
             Cellphone technology. It can only be 
             'GSM', '3G' or '4G'.
         flood_file : string
@@ -163,7 +162,6 @@ class IntersectLayers:
                                 flood_part = str(self.flood_file).strip('.tif')
                                 
                                 filename = '{}_{}'.format(flood_part, region_part)
-                                #filename = '{}_{}_{}'.format(cell_generation, flood_part, region_part)
 
                                 folder_out_3 = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard_coverage_poverty')
                                 if not os.path.exists(folder_out_3):
@@ -369,9 +367,9 @@ class IntersectLayers:
 
         return None
 
-'''if __name__ == '__main__':
+if __name__ == '__main__':
 
     inter = IntersectLayers()
     inter.pop_flood()
     inter.pophaz_coverage()
-    inter.intersect_all()'''
+    inter.intersect_all()

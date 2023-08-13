@@ -1,9 +1,9 @@
 import os
-import pandas as pd
-import geopandas as gpd
 import configparser
 import time
 import warnings
+import pandas as pd
+import geopandas as gpd
 pd.options.mode.chained_assignment = None
 
 CONFIG = configparser.ConfigParser()
@@ -95,6 +95,11 @@ def generate_averages(iso3):
     inundation depth of the floods. 
     It also regenerates the aggregate results in the previous function
     by cellphone technology.
+
+    Parameters
+    ----------
+    iso3 : string
+        Country ISO3 code
     """
 
     path_in = os.path.join(
