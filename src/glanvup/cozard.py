@@ -51,8 +51,7 @@ class CoastProcess:
             iso3 = country['iso3']
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
-
-            
+ 
             #set the filename depending our preferred regional level
             filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
             folder = os.path.join('data','processed', iso3, 'regions')
@@ -116,7 +115,7 @@ class CoastProcess:
     def process_flood_shapefile(self):
 
         """
-        This function process each of the tif files into shapefiles
+        This function process each of the tiff files into shapefiles
         """
         folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'tifs')
 

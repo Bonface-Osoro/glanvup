@@ -1,7 +1,5 @@
 import configparser
-import os                 
-import json
-import pyproj
+import os 
 import rasterio
 import warnings
 import contextily as cx
@@ -24,7 +22,7 @@ DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
 
 def clean_coverage(x):
     """
-    Cleans the coverage polygons by remove 
+    Cleans the coverage polygons by removing 
     small multipolygon shapes.
 
     Parameters
@@ -201,6 +199,7 @@ class CoverageProcess:
                 technologies = ['GSM', '3G', '4G']
 
                 for tech in tqdm(technologies, desc = 'Processing coverage shapefiles for {} coverage'.format(iso3)):
+                    
                     #loading in coverage info
                     filename = 'coverage_{}.shp'.format(tech) 
                     folder= os.path.join(DATA_PROCESSED, iso3 , 'coverage', 'national')

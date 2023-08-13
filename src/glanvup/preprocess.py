@@ -30,6 +30,7 @@ def remove_small_shapes(x):
 
     """
     if x.geometry.type == 'Polygon':
+
         return x.geometry
 
     elif x.geometry.type == 'MultiPolygon':
@@ -41,17 +42,26 @@ def remove_small_shapes(x):
             return x.geometry
 
         if x['GID_0'] in ['CHL','IDN']:
+
             threshold = 0.01
+
         elif x['GID_0'] in ['RUS','GRL','CAN','USA']:
+
             threshold = 0.01
+
         elif x.geometry.area > area2:
+
             threshold = 0.1
+
         else:
+
             threshold = 0.001
 
         new_geom = []
         for y in list(x['geometry'].geoms):
+
             if y.area > threshold:
+
                 new_geom.append(y)
 
         return MultiPolygon(new_geom)
@@ -133,12 +143,10 @@ class ProcessCountry:
             remove_small_shapes, axis = 1)
         
         glob_info_path = os.path.join(self.csv_country)
-        load_glob_info = pd.read_csv(glob_info_path, encoding = 
-                                     'ISO-8859-1', 
+        load_glob_info = pd.read_csv(glob_info_path, encoding = 'ISO-8859-1', 
                                      keep_default_na = False)
         
-        single_country = single_country.merge(
-            load_glob_info, left_on = 'GID_0', 
+        single_country = single_country.merge(load_glob_info, left_on = 'GID_0', 
             right_on = 'iso3')
         
         single_country.to_file(shape_path)
@@ -218,7 +226,7 @@ class ProcessRegions:
     
     def process_sub_region_boundaries(self):
 
-        region_path = '../' #Not needed now
+        region_path = '../' 
         countries = gpd.read_file(region_path)
 
         for index, row in tqdm(countries.iterrows(), desc = 'Processing sub-region boundaries'):
@@ -257,12 +265,11 @@ class ProcessPopulation:
             Name of the country metadata file.
         country_iso3 : string
             Country iso3 to be processed.
-        pop_tiff: string
-            Filename of the population raster layer
         gid_region: string
             GID boundary spatial level to process
-        region : string
-            Region shapefile to process
+        pop_tiff: string
+            Filename of the population raster layer
+
         """
         self.csv_country = csv_country
         self.country_iso3 = country_iso3
@@ -280,7 +287,6 @@ class ProcessPopulation:
 
         iso3 = self.country_iso3
         gid_region = self.gid_region
-        gid_level = 'GID_{}'.format(gid_region)
 
         filename = self.pop_tiff
         path_pop = os.path.join(filename)

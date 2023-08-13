@@ -1,6 +1,5 @@
-import configparser
 import os
-import tqdm
+import configparser
 import geopandas as gpd
 import pandas as pd
 from glanvup.rizard import FloodProcess
@@ -34,7 +33,6 @@ for idx, country in countries.iterrows():
                                      countries['iso3'].loc[idx], 
                                      'pop_hazard_coverage_poverty')
 
-    #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:# 
     if not country['iso3'] == 'BDI':
         continue 
 
@@ -48,18 +46,18 @@ for idx, country in countries.iterrows():
             flooding.process_flood_tiff()
             flooding.process_flood_shapefile()
 
-            #wealths = WealthProcess(path, countries['iso3'].loc[idx])
-            #wealths.process_national_rwi()
-            #wealths.process_regional_rwi()
+            wealths = WealthProcess(path, countries['iso3'].loc[idx])
+            wealths.process_national_rwi()
+            wealths.process_regional_rwi()
 
-            #coverages = CoverageProcess(path, countries['iso3'].loc[idx])
-            #coverages.process_national_coverage()
-            #coverages.process_regional_coverage()
+            coverages = CoverageProcess(path, countries['iso3'].loc[idx])
+            coverages.process_national_coverage()
+            coverages.process_regional_coverage()
 
-            #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            #intersection.pop_flood()
-            #intersection.pophaz_coverage()
-            #intersection.intersect_all()
+            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            intersection.pop_flood()
+            intersection.pophaz_coverage()
+            intersection.intersect_all()
 
         except:
 

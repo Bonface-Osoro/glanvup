@@ -4,7 +4,6 @@ import pandas as pd
 import geopandas as gpd
 import configparser
 from glanvup.intersections import IntersectLayers
-from glanvup.continents import asia, south_America, north_america, africa, europe, oceania 
 pd.options.mode.chained_assignment = None
 
 CONFIG = configparser.ConfigParser()
@@ -218,7 +217,7 @@ countries = os.listdir(DATA_RESULTS)
 ######### UNCONNECTED POPULATION #########
 file = []
 technologies = ['GSM', '3G', '4G']
-'''
+
 for country in countries:
 
     try:
@@ -230,11 +229,11 @@ for country in countries:
     except:
 
         pass
-'''
+
 ######### RIVERINE HAZARD VULNERABLE POPULATION #########
 flood_folder = os.path.join(DATA_RAW, 'flood_hazard')
 flood_files = os.listdir(flood_folder)
-'''
+
 for country in countries:
 
     try:
@@ -247,12 +246,12 @@ for country in countries:
 
     except:
 
-        pass'''
+        pass
 
 ######### COASTAL HAZARD VULNERABLE POPULATION #########
 coastal_folder = os.path.join(DATA_RAW, 'coastal_hazard')
 coast_files = os.listdir(coastal_folder)
-'''
+
 for country in countries:
 
     try:
@@ -266,7 +265,7 @@ for country in countries:
     except:
 
         pass
-'''
+
 #### PROCESS UNCONNECTED POPULATION CSV FILES ####
 if __name__ == '__main__':
 
@@ -279,8 +278,8 @@ if __name__ == '__main__':
 
         try:
 
-            #folder = os.path.join(folders, iso, 'pop_unconnected')
-            #generate_unconnected_csv(folder, iso)
+            folder = os.path.join(folders, iso, 'pop_unconnected')
+            generate_unconnected_csv(folder, iso)
 
             folder = os.path.join(folders, iso, 'vul_river_hazard')
             riv_vulnerable_csv(folder, iso)
