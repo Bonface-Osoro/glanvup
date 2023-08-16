@@ -1,6 +1,6 @@
 import os
+import time
 import configparser
-import geopandas as gpd
 import pandas as pd
 from glanvup.rizard import FloodProcess
 from glanvup.cozard import CoastProcess
@@ -27,6 +27,7 @@ coast_files = os.listdir(coastal_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
+start = time.time()
 for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
@@ -44,7 +45,6 @@ for idx, country in countries.iterrows():
 
             intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
             intersection.vulri_intersect_all()
-
             #wealths = WealthProcess(path, countries['iso3'].loc[idx])
             #wealths.process_national_rwi()
             #wealths.process_regional_rwi()
@@ -61,7 +61,8 @@ for idx, country in countries.iterrows():
         except:
 
             pass
-
+        
+executionTime = (time.time() - start)
 '''coastlines = ['SLE']
 for coast in coastlines:
 

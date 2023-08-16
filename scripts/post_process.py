@@ -227,10 +227,10 @@ def global_vulnerable(metric, hazard):
 
 def global_unconnected():
     '''
-    This function averages all the individual 
+    This function merges all the individual 
     unconnected population into a single file. 
     It also classifies the individual countries 
-    into specific continnets, regions and income group.
+    into specific continents, regions and income group.
 
     '''
 
@@ -238,7 +238,7 @@ def global_unconnected():
     combined_df = pd.DataFrame()
 
     for iso3 in isos:
-        
+
         print('Processing continent, region and income for {} unconnected csv file'.format(iso3))
 
         try:
@@ -249,13 +249,15 @@ def global_unconnected():
 
                 for file in files:
 
-                    if file.endswith('.csv'):
+                    if file.endswith('_cellphone_average.csv'):
 
                         file_path = os.path.join(root, file)
                         df = pd.read_csv(file_path)
-                        df['continent'] = ''
+
+                        df[['iso3', 'continent', 'region', 'income']] = ''
 
                         for i in range(len(df)):
+
                             if iso3 in asia:
 
                                 df['continent'].loc[i] = 'Asia'
@@ -324,14 +326,16 @@ def global_unconnected():
 
                                 df['income'].loc[i] = 'LMC'
 
-                            elif iso3 in upper_income:
+                            else: 
 
                                 df['income'].loc[i] = 'UMC'
 
-                            else: 
+                        for i in range(len(df)):
 
-                                df['income'].loc[i] = 'HIC'
-                
+                            df['iso3'].loc[i] = iso3
+
+                            df = df[['iso3', 'value', 'technology', 'region', 'income', 'continent']]
+
                         combined_df = pd.concat([combined_df, df], ignore_index = True)
                         
                         fileout = 'unconnected_global_results.csv'.format()
@@ -344,6 +348,7 @@ def global_unconnected():
                         path_out = os.path.join(folder_out, fileout)
                         combined_df.to_csv(path_out, index = False)
         except:
+
             pass
 
     return None
@@ -492,7 +497,8 @@ def globally_poor():
 if __name__ == '__main__':
     
     #globally_poor()
-    hazards = ['riverine']
+    global_unconnected()
+    '''hazards = ['riverine']
 
     for hazard in hazards:
 
@@ -500,4 +506,4 @@ if __name__ == '__main__':
         #global_average('area', hazard)
         global_vulnerable('depth', 'riverine')
         global_vulnerable('area', 'riverine')
-        global_vulnerable('population', 'riverine')
+        global_vulnerable('population', 'riverine')'''

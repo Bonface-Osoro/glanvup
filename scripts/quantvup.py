@@ -312,6 +312,42 @@ def generate_vulnerable_averages(iso3, hazard):
     
     return print('Averaging completed for {}'.format(iso3))
 
+
+def generate_cell_averages(iso3):
+    """
+    This function calculates the total number of unconected 
+    people by cellphone technology for each country.
+
+    Parameters
+    ----------
+    iso3 : string
+        Country ISO3 code
+    """
+
+    DATA_RESULTS = os.path.join(BASE_PATH, 'results')
+    path_in = os.path.join(DATA_RESULTS, iso3, 'unconnected_csv_files', 
+        '{}_unconnected_results.csv'.format(iso3))
+    
+    df = pd.read_csv(path_in)
+    df = df.drop(['NAME_0', 'NAME_1'], axis = 1)
+
+    print('Calculating cellphone average for {}'.format(iso3))
+    cellphone = df.groupby(['technology'])['value'].sum()
+
+    fileout = '{}_cellphone_average.csv'.format(iso3)
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'unconnected_csv_files')
+
+    if not os.path.exists(folder_out):
+
+        os.makedirs(folder_out)
+
+    path_out = os.path.join(folder_out, fileout)
+
+    cellphone.to_csv(path_out)
+    
+    return print('Averaging completed for {}'.format(iso3))
+
+
 countries = os.listdir(DATA_RESULTS)
 
 ######### UNCONNECTED POPULATION #########
@@ -357,26 +393,6 @@ for iso in isos:
     except:
 
         pass'''
-######### RIVERINE HAZARD VULNERABLE POPULATION #########
-flood_folder = os.path.join(DATA_RAW, 'flood_hazard')
-flood_files = os.listdir(flood_folder)
-
-path = os.path.join(DATA_RAW, 'countries.csv')
-countries = ['BDI']
-for country in countries:
-
-    try:
-        
-        for file in flood_files:
-
-            if not file.endswith('.DS_Store'):
-
-                intersection = IntersectLayers(country, 'GSM', file)
-                intersection.vul_intersect_all()
-
-    except:
-
-        pass
 
 ######### COASTAL HAZARD VULNERABLE POPULATION #########
 '''coastal_folder = os.path.join(DATA_RAW, 'coastal_hazard')
@@ -397,7 +413,7 @@ for country in countries:
         pass'''
 
 #### PROCESS UNCONNECTED POPULATION CSV FILES ####
-'''if __name__ == '__main__':
+if __name__ == '__main__':
 
     start = time.time()
 
@@ -415,7 +431,8 @@ for country in countries:
             #folder = os.path.join(folders, iso, 'vul_river_hazard')
             #riv_vulnerable_csv(folder, iso)
 
-            generate_vulnerable_averages(iso, 'riverine')
+            generate_cell_averages(iso)
+            #generate_vulnerable_averages(iso, 'riverine')
 
             #folder = os.path.join(folders, iso, 'vul_coast_hazard')
             #coast_vulnerable_csv(folder, iso)
@@ -423,5 +440,5 @@ for country in countries:
         except:
 
             pass
-'
-    executionTime = (time.time() - start)'''
+
+    executionTime = (time.time() - start)

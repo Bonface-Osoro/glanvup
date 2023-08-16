@@ -61,9 +61,8 @@ class FloodProcess:
 
                 gid_id = region[gid_level]
                 gid_name = region['NAME_1']
-                
                 print('Working on {} flooding layers'.format(gid_name))
-
+               
                 filename = self.flood_tiff
                 path_hazard = os.path.join(filename)
                 hazard = rasterio.open(path_hazard, 'r+')
@@ -103,7 +102,7 @@ class FloodProcess:
                 out_meta.update({'driver': 'GTiff', 'height': out_img.shape[1],
                                 'width': out_img.shape[2], 'transform': out_transform,
                                 'crs': 'epsg:4326'})
-
+                
                 filename_out = '{}.tif'.format(gid_id) 
                 folder_out = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
 

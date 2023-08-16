@@ -1,6 +1,7 @@
 import os
 import warnings
 import configparser
+import tqdm
 import geopandas as gpd
 import pandas as pd
 pd.options.mode.chained_assignment = None
