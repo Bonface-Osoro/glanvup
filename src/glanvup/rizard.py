@@ -78,6 +78,26 @@ class FloodProcess:
                 
                 out_img, out_transform = mask(hazard, coords, crop = True)
 
+                depths = []
+
+                for idx, row in enumerate(out_img[0]):
+
+                    for idx2, i in enumerate(row):
+
+                        if i > 0.001 and i < 150:
+
+                            #coords = raster.transform * (idx2, idx)
+
+                            depths.append(i)
+
+                        else:
+
+                            continue
+
+                if sum(depths) < 0.01:
+
+                    return
+
                 out_meta = hazard.meta.copy()
 
                 out_meta.update({'driver': 'GTiff', 'height': out_img.shape[1],
@@ -94,6 +114,7 @@ class FloodProcess:
                 path_out = os.path.join(folder_out, filename_out)
 
                 with rasterio.open(path_out, 'w', ** out_meta) as dest:
+
                     dest.write(out_img)
             
             print('Processing complete for {}'.format(iso3))
@@ -110,7 +131,6 @@ class FloodProcess:
 
         for tifs in tqdm(os.listdir(folder), 
                          desc = 'Processing flooding shapefiles for {}...'.format(self.country_iso3)):
-
             try:
 
                 if tifs.endswith('.tif'):
@@ -168,6 +188,7 @@ class FloodProcess:
                     output = gpd.GeoDataFrame.from_features(output, crs = 'epsg:4326')
                     output.to_file(path_out, driver = 'ESRI Shapefile')
             except:
+            
                 pass
-
+            
         return None

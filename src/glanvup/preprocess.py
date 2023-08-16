@@ -335,6 +335,78 @@ class ProcessPopulation:
 
         return print('Population processing completed for {}'.format(iso3))
     
+    def process_country_population(self):
+        """
+        This function process each of the population 
+        raster layers to vector shapefiles
+        """
+        folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'national')
+
+        for tifs in tqdm(os.listdir(folder), 
+                         desc = 'Processing {} population shapefile'.format(self.country_iso3)):
+            try:
+
+                if tifs.endswith('.tif'):
+
+                    tifs = os.path.splitext(tifs)[0]
+
+                    folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'national')
+                    filename = tifs + '.tif'
+                    
+                    path_in = os.path.join(folder, filename)
+
+                    folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'country_shapefile')
+                    if not os.path.exists(folder):
+
+                        os.mkdir(folder)
+                        
+                    filename = self.country_iso3 + '.shp'
+                    path_out = os.path.join(folder, filename)
+
+                    with rasterio.open(path_in) as src:
+
+                        affine = src.transform
+                        array = src.read(1)
+
+                        output = []
+
+                        for vec in rasterio.features.shapes(array):
+
+                            if vec[1] > 0 and not vec[1] == 255:
+
+                                coordinates = [i for i in vec[0]['coordinates'][0]]
+
+                                coords = []
+
+                                for i in coordinates:
+
+                                    x = i[0]
+                                    y = i[1]
+
+                                    x2, y2 = src.transform * (x, y)
+
+                                    coords.append((x2, y2))
+
+                                output.append({
+                                    'type': vec[0]['type'],
+                                    'geometry': {
+                                        'type': 'Polygon',
+                                        'coordinates': [coords],
+                                    },
+                                    'properties': {
+                                        'value': vec[1],
+                                    }
+                                })
+
+                    output = gpd.GeoDataFrame.from_features(output, crs = 'epsg:4326')
+                    output.to_file(path_out, driver = 'ESRI Shapefile')
+
+            except:
+
+                pass
+
+        return None
+
 
     def process_regional_population(self):
         """
@@ -416,7 +488,7 @@ class ProcessPopulation:
 
         """
         This function process each of the population 
-        raster layers toi vector shapefiles
+        raster layers to vector shapefiles
         """
         folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'tiffs')
 

@@ -22,7 +22,8 @@ income_group = ['LIC', 'LMC', 'UMC']
 
 for idx, country in countries.iterrows():
 
-    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+    #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+    if not country['iso3'] == 'BDI':
         
         continue 
 
@@ -36,3 +37,4 @@ for idx, country in countries.iterrows():
     country_pop = populations.process_national_population()
     region_pop = populations.process_regional_population()
     region_shapefile = populations.pop_process_shapefiles()
+    populations.process_country_population()
