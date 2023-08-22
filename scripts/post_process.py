@@ -27,7 +27,7 @@ def global_average(metric, hazard):
     metric : string
         Attribute being quantified. It can be area, 
         flood depth or population under flooding
-        valid options are; 'area', 'flood' & 'population'
+        valid options are; 'area', 'depth' & 'population'
     '''
 
     isos = os.listdir(DATA_RESULTS)
@@ -35,13 +35,13 @@ def global_average(metric, hazard):
 
     for iso3 in isos:
 
-        csv_path = os.path.join(DATA_RESULTS, iso3, '{}_csv_files'.format(hazard))
+        csv_path = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
 
         for root, _, files in os.walk(csv_path):
 
             for file in files:
 
-                if file.endswith('_{}_average.csv'.format(metric)):
+                if file.endswith('_{}_{}_average.csv'.format(hazard, metric)):
 
                     file_path = os.path.join(root, file)
                     df = pd.read_csv(file_path)
@@ -124,7 +124,7 @@ def global_vulnerable(metric, hazard):
 
             for file in files:
 
-                if file.endswith('_{}_average.csv'.format(metric)):
+                if file.endswith('{}_{}_average.csv'.format(hazard, metric)):
 
                     file_path = os.path.join(root, file)
                     df = pd.read_csv(file_path)
@@ -209,7 +209,7 @@ def global_vulnerable(metric, hazard):
                         else: 
 
                             df['income'].loc[i] = 'HIC'
-            
+                    df.rename(columns = {'country':'iso3'}, inplace = True)
                     combined_df = pd.concat([combined_df, df], ignore_index = True)
                     
                     fileout = 'vulnerable_{}_{}_results.csv'.format(hazard, metric)
@@ -497,13 +497,13 @@ def globally_poor():
 if __name__ == '__main__':
     
     #globally_poor()
-    global_unconnected()
-    '''hazards = ['riverine']
+    #global_unconnected()
+    hazards = ['coastal']
 
     for hazard in hazards:
 
         #global_average('population', hazard)
         #global_average('area', hazard)
-        global_vulnerable('depth', 'riverine')
-        global_vulnerable('area', 'riverine')
-        global_vulnerable('population', 'riverine')'''
+        global_vulnerable('depth', 'coastal')
+        global_vulnerable('area', 'coastal')
+        global_vulnerable('population', 'coastal')

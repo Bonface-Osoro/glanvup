@@ -430,7 +430,16 @@ class ProcessPopulation:
             gid_level = 'GID_{}'.format(gid_region)
             
             #set the filename depending our preferred regional level
-            filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
+            large_countries = ['BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
+            if country['iso3'] in large_countries:
+                
+                filename = 'regions_1_{}.shp'.format(iso3)
+                gid_level = 'GID_1'
+
+            else:
+
+                filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
+                gid_level = 'GID_{}'.format(gid_region)
             folder = os.path.join('data','processed', iso3, 'regions')
             
             #then load in our regions as a geodataframe

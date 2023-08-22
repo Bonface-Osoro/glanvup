@@ -50,8 +50,17 @@ class FloodProcess:
             iso3 = country['iso3']
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
+            large_countries = ['BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
+            if country['iso3'] in large_countries:
+                
+                filename = 'regions_1_{}.shp'.format(iso3)
+                gid_level = 'GID_1'
 
-            filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
+            else:
+
+                filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
+                gid_level = 'GID_{}'.format(gid_region)
+
             folder = os.path.join('data','processed', iso3, 'regions')
             
             path_regions = os.path.join(folder, filename)
@@ -76,26 +85,6 @@ class FloodProcess:
                 coords = [json.loads(geo.to_json())['features'][0]['geometry']] 
                 
                 out_img, out_transform = mask(hazard, coords, crop = True)
-
-                depths = []
-
-                for idx, row in enumerate(out_img[0]):
-
-                    for idx2, i in enumerate(row):
-
-                        if i > 0.001 and i < 150:
-
-                            #coords = raster.transform * (idx2, idx)
-
-                            depths.append(i)
-
-                        else:
-
-                            continue
-
-                if sum(depths) < 0.01:
-
-                    return
 
                 out_meta = hazard.meta.copy()
 

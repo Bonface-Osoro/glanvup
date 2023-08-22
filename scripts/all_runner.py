@@ -27,31 +27,30 @@ coast_files = os.listdir(coastal_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
-start = time.time()
 for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
 
         continue 
-
+    
     for file in flood_files:
 
         try:
-            flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
+            #flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
-            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
-            flooding.process_flood_tiff()
-            flooding.process_flood_shapefile()
+            #flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
+            #flooding.process_flood_tiff()
+            #flooding.process_flood_shapefile()
 
-            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            intersection.vulri_intersect_all()
+            #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            #intersection.vulri_intersect_all()
             #wealths = WealthProcess(path, countries['iso3'].loc[idx])
             #wealths.process_national_rwi()
             #wealths.process_regional_rwi()
 
-            #coverages = CoverageProcess(path, countries['iso3'].loc[idx])
-            #coverages.process_national_coverage()
-            #coverages.process_regional_coverage()
+            coverages = CoverageProcess(path, countries['iso3'].loc[idx])
+            coverages.process_national_coverage()
+            coverages.process_regional_coverage()
 
             #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
             #intersection.pop_flood()
@@ -62,12 +61,9 @@ for idx, country in countries.iterrows():
 
             pass
         
-executionTime = (time.time() - start)
-'''coastlines = ['SLE']
-for coast in coastlines:
 
-    intersected_files = os.path.join(DATA_RESULTS, coast, 
-                                'pop_cozard_coverage_poverty')
+'''coastlines = ['BRA', 'CHN', 'DZA', 'IND']
+for coast in coastlines:
 
     for file in coast_files:
 
@@ -79,7 +75,7 @@ for coast in coastlines:
             coastal.process_flood_tiff() 
             coastal.process_flood_shapefile()
 
-            intersection = IntersectLayers(coast, '3G', file)
+            intersection = IntersectLayers(coast, 'GSM', file)
             intersection.vulco_intersect_all()
             #intersection.pop_cozard()
             #intersection.popcozard_coverage()

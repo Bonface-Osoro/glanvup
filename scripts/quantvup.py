@@ -285,9 +285,9 @@ def generate_vulnerable_averages(iso3, hazard):
 
     flood = df.groupby(['country', 'scenario', 'period'])['value_2'].mean()
     
-    population = df.groupby(['country', 'scenario', 'period'])['value_1'].mean()
+    population = df.groupby(['country', 'scenario', 'period'])['value_1'].sum()
     
-    areas = df.groupby(['country', 'scenario', 'period'])['area'].mean()
+    areas = df.groupby(['country', 'scenario', 'period'])['area'].sum()
 
     fileout = '{}_{}_depth_average.csv'.format(iso3, hazard)
     fileout_2 = '{}_{}_population_average.csv'.format(iso3, hazard)
@@ -432,7 +432,7 @@ if __name__ == '__main__':
             #riv_vulnerable_csv(folder, iso)
 
             generate_cell_averages(iso)
-            #generate_vulnerable_averages(iso, 'riverine')
+            generate_vulnerable_averages(iso, 'coastal')
 
             #folder = os.path.join(folders, iso, 'vul_coast_hazard')
             #coast_vulnerable_csv(folder, iso)
