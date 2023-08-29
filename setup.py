@@ -17,13 +17,13 @@ def readme():
 
 
 setup(
-    name='glanvup',
+    name='cafe-chapo',
     use_scm_version=True,
     license='MIT License',
-    description='Global Assessment of Natural Hazards towards Vulnerable and Unconnected Population',
+    description='Capacitated Facility Location for Electric Charging Points',
     long_description=readme(),
     long_description_content_type="text/markdown",
-    author='Bonface Osoro/Ed Oughton',
+    author='Bonface Osoro',
     author_email='bosoro@gmu.edu',
     url='https://github.com/Bonface-Osoro/saleos',
     packages=find_packages('src'),
@@ -42,7 +42,7 @@ setup(
         'Topic :: Utilities',
     ],
     keywords=[
-        'natural hazards','connectivity', 'broadband', 'population'
+        'optimization','capacitated', 'electric-vehicle', 'charging'
     ],
     setup_requires=[
         'setuptools_scm'
