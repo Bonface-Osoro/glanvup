@@ -2,11 +2,8 @@ import os
 import json
 import rasterio
 import warnings
-import contextily as cx
 import geopandas as gpd   
-import matplotlib.pyplot as plt
 import pandas as pd       
-import seaborn as sns
 from rasterio.mask import mask
 from shapely.geometry import MultiPolygon
 from tqdm import tqdm
@@ -40,6 +37,7 @@ class CoastProcess:
 
         """
         countries = pd.read_csv(self.csv_filename, encoding = 'latin-1')
+        print('Working on {} coastal flooding layers'.format(self.country_iso3))
         
         for idx, country in countries.iterrows():
 
@@ -51,7 +49,7 @@ class CoastProcess:
             iso3 = country['iso3']
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
-            large_countries = ['BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
+            large_countries = ['ARG', 'BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
             if country['iso3'] in large_countries:
                 
                 filename = 'regions_1_{}.shp'.format(iso3)
@@ -73,9 +71,6 @@ class CoastProcess:
                 #get our gid id for this region 
                 #(which depends on the country-specific gid level)
                 gid_id = region[gid_level]
-                gid_name = region['NAME_1']
-                
-                print('Working on {} coastal flooding layers'.format(gid_name))
                 
                 #let's load in our hazard layer
                 filename = self.flood_tiff
@@ -129,7 +124,6 @@ class CoastProcess:
 
         for tifs in tqdm(os.listdir(folder), 
                          desc = 'Processing flooding shapefiles for {}...'.format(self.country_iso3)):
-
             try:
 
                 if tifs.endswith('.tif'):

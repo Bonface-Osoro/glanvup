@@ -50,7 +50,7 @@ class FloodProcess:
             iso3 = country['iso3']
             gid_region = country['gid_region']
             gid_level = 'GID_{}'.format(gid_region)
-            large_countries = ['BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
+            large_countries = ['ARG', 'BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
             if country['iso3'] in large_countries:
                 
                 filename = 'regions_1_{}.shp'.format(iso3)
@@ -69,9 +69,6 @@ class FloodProcess:
             for idx, region in regions.iterrows():
 
                 gid_id = region[gid_level]
-                gid_name = region['NAME_1']
-                print('Working on {} flooding layers'.format(gid_name))
-               
                 filename = self.flood_tiff
                 path_hazard = os.path.join(filename)
                 hazard = rasterio.open(path_hazard, 'r+')

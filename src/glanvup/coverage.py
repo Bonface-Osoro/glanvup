@@ -179,7 +179,7 @@ class CoverageProcess:
             iso3 = country['iso3']                 
             gid_region = country['gid_region']
             #gid_level = 'GID_{}'.format(gid_region)
-            large_countries = ['BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
+            large_countries = ['ARG', 'BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
             if country['iso3'] in large_countries:
                 
                 filename = 'regions_1_{}.shp'.format(iso3)
