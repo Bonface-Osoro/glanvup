@@ -17,10 +17,10 @@ def readme():
 
 
 setup(
-    name='cafe-chapo',
+    name='glanvup',
     use_scm_version=True,
     license='MIT License',
-    description='Capacitated Facility Location for Electric Charging Points',
+    description='Global Assessment of Natural Hazards towards Vulnerable and Unconnected Population',
     long_description=readme(),
     long_description_content_type="text/markdown",
     author='Bonface Osoro',
@@ -42,7 +42,7 @@ setup(
         'Topic :: Utilities',
     ],
     keywords=[
-        'optimization','capacitated', 'electric-vehicle', 'charging'
+        'natural hazards','connectivity', 'broadband', 'population'
     ],
     setup_requires=[
         'setuptools_scm'
