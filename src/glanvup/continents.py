@@ -64,7 +64,7 @@ south_coast = ['ARG', 'COL', 'VEN', 'PER', 'ECU', 'URY', 'GUY', 'BRA']
 ##### INCOME CLASSIFICATION ####
 low_income = ['AFG', 'PRK', 'SSD', 'BFA', 'LBR', 'SDN', 'BDI', 'MDG', 'SYR', 
               'CAF', 'MWI', 'TGO', 'TCD', 'MLI', 'UGA', 'COD', 'MOZ', 'YEM', 
-              'ERI', 'NER', 'ETH', 'RWA', 'GMB', 'SLE', 'GNB', 'SOM']
+              'ERI', 'NER', 'ETH', 'RWA', 'GMB', 'SLE', 'GNB', 'SOM', 'VEN']
 
 low_middle = ['AGO', 'JOR', 'PHL', 'DZA', 'IND', 'WSM', 'BGD', 'IRN', 'STP', 
               'BEN', 'KEN', 'SEN', 'BTN', 'KIR', 'SLB', 'BOL', 'KGZ', 'LKA', 
@@ -78,7 +78,8 @@ upper_income = ['ALB', 'FJI', 'MKD', 'ARG', 'GAB', 'PLW', 'ARM', 'GEO', 'PRY',
                 'BIH', 'IRQ', 'ZAF', 'BWA', 'JAM', 'LCA', 'BRA', 'KAZ', 'VCT', 
                 'BGR', 'XKX', 'SUR', 'CHN', 'LBY', 'THA', 'COL', 'MYS', 'TON', 
                 'CRI', 'MDV', 'TUR', 'CUB', 'MHL', 'TKM', 'DMA', 'MUS', 'TUV',
-                'DOM', 'MEX', 'PSE', 'SLV', 'MDA', 'GNQ', 'MNE', 'ECU', 'NAM']
+                'DOM', 'MEX', 'PSE', 'SLV', 'MDA', 'GNQ', 'MNE', 'ECU', 'NAM',
+                'GUY']
 
 high_income = ['ASM', 'DEU', 'OMN', 'AND', 'GIB', 'PAN', 'ATG', 'GRC', 'POL', 'ABW',
                'GRL', 'PRT', 'AUS', 'GUM', 'PRI', 'AUT', 'HKG', 'QAT', 'BHS', 'HUN',
@@ -88,7 +89,7 @@ high_income = ['ASM', 'DEU', 'OMN', 'AND', 'GIB', 'PAN', 'ATG', 'GRC', 'POL', 'A
                'MAF', 'HRV', 'LTU', 'SWE', 'CUW', 'LUX', 'CHE', 'CYP', 'MAC', 'TWN',
                'CZE', 'MLT', 'TTO', 'DNK', 'MCO', 'TCA', 'EST', 'NRU', 'ARE', 'FRO',
                'NLD', 'GBR', 'FIN', 'NCL', 'USA', 'FRA', 'NZL', 'URY', 'PYF', 'MNP',
-               'VIR', 'GUY', 'NOR']
+               'VIR', 'NOR']
 
 ##### REGIONAL CLASSIFICATION ######
 east_asia_pacific = ['ASM', 'KOR', 'PHL', 'AUS', 'LAO', 'WSM', 'BRN', 'MAC', 'SGP', 
