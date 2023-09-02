@@ -576,6 +576,9 @@ def sum_hazards(iso3, hazard):
     ----------
     iso3 : string
         Country ISO3 code
+    hazard : string
+        Hazard quantified: i.e `riverine`, `coastal`
+        or `tropical`.
     """
 
     DATA_RESULTS = os.path.join(BASE_PATH, 'results')
@@ -697,7 +700,7 @@ def global_hazard_summation(metric, hazard):
     return None
 
 
-def gen_agg_riv_cov_csv(iso3):
+def gen_agg_hazard_cov_csv(iso3, hazard):
     """
     This function generate a single 
     csv file of unconnected and vulnerable 
@@ -709,11 +712,21 @@ def gen_agg_riv_cov_csv(iso3):
     ----------
     iso3 : string
         Country ISO3 code
+    hazard : string
+        Hazard quantified: i.e `riverine`, `coastal`
+        or `tropical`.
     """
     DATA_RESULTS = os.path.join(BASE_PATH, 'results')
-    intersect_folder = os.path.join(BASE_PATH, 'results', iso3, 'cov_rizard')
 
-    print('processing {} csv'.format(iso3))
+    if hazard == 'riverine':
+        print('Processing {} {} csv'.format(iso3, hazard))
+        intersect_folder = os.path.join(BASE_PATH, 'results', iso3, 'cov_rizard')
+
+    else:
+
+        print('Processing {} {} csv'.format(iso3, hazard))
+        intersect_folder = os.path.join(BASE_PATH, 'results', iso3, 'cov_cozard')
+
     merged_shapefile = gpd.GeoDataFrame()
 
     for file_name in os.listdir(intersect_folder):
@@ -725,7 +738,7 @@ def gen_agg_riv_cov_csv(iso3):
 
             shapefile[['iso3', 'scenario', 'period', 'technology']] = ''
             scenarios = ['historical', 'rcp4p5','rcp8p5']
-            periods = ['rp00100', 'rp01000']
+            periods = ['rp00100', 'rp0100', 'rp1000', 'rp01000']
             technologies = ['GSM', '3G', '4G']
 
             for i in range(len(shapefile)):
@@ -751,19 +764,18 @@ def gen_agg_riv_cov_csv(iso3):
                 shapefile['iso3'].loc[i] = iso3
 
             shapefile = shapefile[['iso3', 'value_1', 
-                                   'value_2', 'period', 'scenario', 
-                                   'technology', 'geometry']]
+                                'value_2', 'period', 'scenario', 
+                                'technology', 'geometry']]
 
             shapefile = shapefile.to_crs(crs = 3857) 
             shapefile['area'] = shapefile.geometry.area
             shapefile = shapefile.drop(['geometry'], axis = 1)
 
             merged_shapefile = pd.concat([merged_shapefile, 
-                                          shapefile], 
-                                          ignore_index = True)           
+                                        shapefile], 
+                                        ignore_index = True)           
 
-    fileout = '{}_riverine_unconnected_aggregated_results.csv'.format(iso3, 
-                                                 merged_shapefile).replace('shp', '_')
+    fileout = '{}_{}_unconnected_aggregated_results.csv'.format(iso3, hazard)
     folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
 
     if not os.path.exists(folder_out):
@@ -777,11 +789,11 @@ def gen_agg_riv_cov_csv(iso3):
     return None
 
 
-def gen_sum_riv_cov(iso3):
+def gen_sum_riv_cov(iso3, hazard):
     """
     This function calculates the total number of people 
     vulnerable to flooding, the area they occupy and the
-    inundation depth of the floods. 
+    average inundation depth of the floods. 
     It also regenerates the aggregate results
     by cellphone technology for each country.
 
@@ -792,8 +804,8 @@ def gen_sum_riv_cov(iso3):
     """
 
     path_in = os.path.join(
-        DATA_RESULTS, iso3, 'riverine_csv_files', 
-        '{}_aggregated_results.csv'.format(iso3))
+        DATA_RESULTS, iso3, 'vulnerable_csv_files', 
+        '{}_riverine_unconnected_aggregated_results.csv'.format(iso3))
     
     df = pd.read_csv(path_in)
     
@@ -835,7 +847,7 @@ def gen_sum_riv_cov(iso3):
     return print('Summation completed for {}'.format(iso3))
 
 
-'''if __name__ == '__main__':
+if __name__ == '__main__':
 
     isos = os.listdir(DATA_RESULTS)
 
@@ -843,32 +855,33 @@ def gen_sum_riv_cov(iso3):
 
         try:
             ######### UNCONNECTED POPULATION #########
-            #folder = os.path.join( DATA_RESULTS, iso, 'pop_unconnected')
-            #generate_unconnected_csv(folder, iso)
-            #generate_cell_summation(iso)
+            folder = os.path.join( DATA_RESULTS, iso, 'pop_unconnected')
+            generate_unconnected_csv(folder, iso)
+            generate_cell_summation(iso)
 
             ######### POVERTY IN-LINE POPULATION #########
-            #folder = os.path.join(DATA_RESULTS, iso, 'poor_population')
-            #generate_poverty_csv(folder, iso)
+            folder = os.path.join(DATA_RESULTS, iso, 'poor_population')
+            generate_poverty_csv(folder, iso)
 
             ######### VULNERABLE POPULATION TO RIVERINE FLOODING #########
-            #riv_vulnerable_csv(iso)
-            #sum_hazards(iso, 'riverine')
-            #global_hazard_summation('area', 'riverine')
-            #global_hazard_summation('population', 'riverine')
+            riv_vulnerable_csv(iso)
+            sum_hazards(iso, 'riverine')
+            global_hazard_summation('area', 'riverine')
+            global_hazard_summation('population', 'riverine')
 
             ######### VULNERABLE POPULATION TO COASTAL FLOODING #########
-            #coast_vulnerable_csv(iso)
-            #sum_hazards(iso, 'coastal')
-            #global_hazard_summation('area', 'coastal')
-            #global_hazard_summation('population', 'coastal')
+            coast_vulnerable_csv(iso)
+            sum_hazards(iso, 'coastal')
+            global_hazard_summation('area', 'coastal')
+            global_hazard_summation('population', 'coastal')
 
-            ## UNCONNECTED & VULNERABLE POPULATION TO RIVERINE FLOODING ##
-            gen_agg_riv_cov_csv(iso)
+            ## UNCONNECTED & VULNERABLE POPULATION TO HAZARDS ##
+            gen_agg_hazard_cov_csv(iso, 'riverine')
+            gen_agg_hazard_cov_csv(iso, 'coastal')
 
         except:
 
             pass
     
-    #global_unconnected()
-    #globally_poor()'''
+    global_unconnected()
+    globally_poor()
