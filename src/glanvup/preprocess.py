@@ -417,6 +417,7 @@ class ProcessPopulation:
         function.
         """
         countries = pd.read_csv(self.csv_country, encoding = 'latin-1')
+        print('Working on {}'.format(self.country_iso3))
         
         for idx, country in countries.iterrows():
 
@@ -451,11 +452,7 @@ class ProcessPopulation:
                 #get our gid id for this region 
                 #(which depends on the country-specific gid level)
                 gid_id = region[gid_level]
-                gid_name = region['NAME_1']
                 
-                print('Working on {}'.format(gid_name))
-                
-                #loading in national population file
                 filename = 'ppp_2020_1km_Aggregated.tif'
                 folder = os.path.join('data','processed', iso3, 'population', 'national')
                 path_pop = os.path.join(folder, filename)

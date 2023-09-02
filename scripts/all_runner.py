@@ -28,22 +28,23 @@ coast_files = os.listdir(coastal_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
-'''for idx, country in countries.iterrows():
+for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
 
         continue 
-    
+    flood_files = ['']
     for file in flood_files:
 
         try:
-            flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
+            #flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
             #flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
             #flooding.process_flood_tiff()
             #flooding.process_flood_shapefile()
 
-            #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            intersection.pop_coverage()
             #intersection.pop_flood()
             #intersection.coverage_rizard()
             
@@ -63,9 +64,9 @@ income_group = ['LIC', 'LMC', 'UMC']
 
         except:
 
-            pass'''
+            pass
         
-for coast in south_coast:
+'''for coast in south_coast:
 
     for file in coast_files:
 
@@ -85,4 +86,4 @@ for coast in south_coast:
 
         except:
 
-            pass
+            pass'''

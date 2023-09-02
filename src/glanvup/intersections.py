@@ -1,7 +1,6 @@
 import os
 import warnings
 import configparser
-import tqdm
 import geopandas as gpd
 import pandas as pd
 pd.options.mode.chained_assignment = None
@@ -302,9 +301,6 @@ class IntersectLayers:
 
                                 intersection.to_file(path_out, driver = 'ESRI Shapefile')
                                 
-                            else:
-
-                                print('Processing coverage results {}'.format(self.country_iso3))
             except:
 
                 pass
