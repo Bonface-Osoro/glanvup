@@ -1030,7 +1030,7 @@ def global_cov_haz_summation(metric, hazard):
 if __name__ == '__main__':
 
     isos = os.listdir(DATA_RESULTS)
-
+    isos = ['IDN']
     for iso in isos:
 
         try:
@@ -1069,13 +1069,13 @@ if __name__ == '__main__':
     #globally_poor()
 
     ## AGGREGATE GLOBAL POPULATION VULNERABLE TO NATURAL HAZARDS ##
-    global_hazard_summation('area', 'riverine')
-    global_hazard_summation('population', 'riverine')
+    #global_hazard_summation('area', 'riverine')
+    #global_hazard_summation('population', 'riverine')
     global_hazard_summation('area', 'coastal')
     global_hazard_summation('population', 'coastal')
 
     ## AGGREGATE GLOBAL UNCONNECTED POPULATION VULNERABLE TO NATURAL HAZARDS ##
-    global_cov_haz_summation('area', 'riverine')
-    global_cov_haz_summation('population', 'riverine')
+    #global_cov_haz_summation('area', 'riverine')
+    #global_cov_haz_summation('population', 'riverine')
     global_cov_haz_summation('area', 'coastal')
     global_cov_haz_summation('population', 'coastal')
