@@ -40,7 +40,7 @@ def copy_shapefiles(iso3, name_pattern, continent):
         Continent where the country belongs to.
     '''
 
-    root_folder = os.path.join(DATA_RESULTS, iso3, 'pop_hazard_coverage_poverty')
+    root_folder = os.path.join(DATA_RESULTS, iso3, 'vul_river_hazard')
     output_folder = os.path.join(BASE_PATH, 'global_results', 'shapefiles', continent) 
 
     if not os.path.exists(output_folder):
@@ -86,12 +86,12 @@ def collect_shapefiles(continent):
     shapefiles = []
     root_folder = os.path.join(BASE_PATH, 'global_results', 'shapefiles', continent)
     country_iso = root_folder.split('/')[2]
+    print('Collecting {} shapefiles'.format(country_iso))
 
     for folder_path, _, files in os.walk(root_folder):
 
         for file in files:
 
-            print('Collecting {} shapefiles'.format(country_iso))
             if file.endswith('.shp'):
 
                 shapefile_path = os.path.join(folder_path, file)
@@ -159,13 +159,13 @@ if __name__ == '__main__':
 
     folders = os.path.join(DATA_RESULTS)
     
-    isos = ['UKR']
+    isos = asia
     
     name_pattern = 'nunriver_historical_000000000WATCH_1980_rp00100_'
     for iso in isos:
-        print('skip')
-        copy_shapefiles(iso, name_pattern, 'UKR')
+        
+        copy_shapefiles(iso, name_pattern, 'Asia')
 
-    global_shapefiles = collect_shapefiles('UKR')
+    global_shapefiles = collect_shapefiles('Asia')
     combined_gdf = combine_geodataframes(global_shapefiles)
-    plot_map(combined_gdf, 'UKR')
+    plot_map(combined_gdf, 'Asia')
