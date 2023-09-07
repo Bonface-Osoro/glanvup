@@ -1071,11 +1071,11 @@ if __name__ == '__main__':
     ## AGGREGATE GLOBAL POPULATION VULNERABLE TO NATURAL HAZARDS ##
     #global_hazard_summation('area', 'riverine')
     #global_hazard_summation('population', 'riverine')
-    global_hazard_summation('area', 'coastal')
-    global_hazard_summation('population', 'coastal')
+    #global_hazard_summation('area', 'coastal')
+    #global_hazard_summation('population', 'coastal')
 
     ## AGGREGATE GLOBAL UNCONNECTED POPULATION VULNERABLE TO NATURAL HAZARDS ##
     #global_cov_haz_summation('area', 'riverine')
     #global_cov_haz_summation('population', 'riverine')
-    global_cov_haz_summation('area', 'coastal')
-    global_cov_haz_summation('population', 'coastal')
+    #global_cov_haz_summation('area', 'coastal')
+    #global_cov_haz_summation('population', 'coastal')
