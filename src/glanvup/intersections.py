@@ -71,8 +71,8 @@ class IntersectLayers:
 
     def pop_poverty(self):
 
-        population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'country_shapefile')
-        poverty_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'rwi', 'national')
+        population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'shapefiles')
+        poverty_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'poverty', 'regions')
         folder_out_1 = os.path.join(DATA_RESULTS, self.country_iso3, 'poor_population')
         if not os.path.exists(folder_out_1):
 
@@ -311,6 +311,7 @@ class IntersectLayers:
 
     def intersect_poverty(self, folder_1, folder_2, folder_out):
 
+        print('Intersecting {} population and poverty layer'.format(self.country_iso3))
         for firstfile in os.listdir(folder_1):
 
             try:
@@ -324,7 +325,6 @@ class IntersectLayers:
 
                             if secondfile.endswith('.shp'):
                                 
-                                print('Intersecting {} population and poverty layer'.format(self.country_iso3))
                                 second_shapefile = os.path.join(folder_2, secondfile)
                                 second_gdf = gpd.read_file(second_shapefile)
 
