@@ -44,7 +44,7 @@ for idx, country in countries.iterrows():
             #flooding.process_flood_shapefile()
 
             intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            intersection.pop_coverage()
+            intersection.pop_poverty()
             #intersection.pop_flood()
             #intersection.coverage_rizard()
             
@@ -56,11 +56,6 @@ for idx, country in countries.iterrows():
             #coverages = CoverageProcess(path, countries['iso3'].loc[idx])
             #coverages.process_national_coverage()
             #coverages.process_regional_coverage()
-
-            #intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            #intersection.pop_flood()
-            #intersection.pophaz_coverage()
-            #intersection.intersect_all()
 
         except:
 
