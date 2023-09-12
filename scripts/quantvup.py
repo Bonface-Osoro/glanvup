@@ -238,7 +238,7 @@ def global_unconnected():
     return None
 
 
-def generate_poverty_csv(intersect_folder, iso3):
+def generate_poverty_csv(iso3):
     """
     This function generate a single 
     csv file of the people living 
@@ -257,11 +257,12 @@ def generate_poverty_csv(intersect_folder, iso3):
     
     print('Generating poverty in-line population {} csv'.format(iso3))
     merged_shapefile = gpd.GeoDataFrame()
+    intersect_folder = os.path.join(DATA_PROCESSED, iso3, 'poverty', 'national')
 
     for file_name in os.listdir(intersect_folder):
 
         if file_name.endswith('.shp'):
-
+            
             file_path = os.path.join(intersect_folder, file_name)
             shapefile = gpd.read_file(file_path)
 
@@ -269,24 +270,49 @@ def generate_poverty_csv(intersect_folder, iso3):
 
             for i in range(len(shapefile)):
 
-                shapefile['iso3'].loc[i] = iso3
-                shapefile['value'] = shapefile['value'].round(2)
-            
-            shapefile = shapefile[['iso3', 'value', 'rwi', 'region', 'income']]     
+                shapefile['iso3'].loc[i] = iso3  
 
-            merged_shapefile = pd.concat([merged_shapefile, shapefile], ignore_index = True)       
-    
-    fileout = '{}_poverty_inline_results.csv'.format(iso3, merged_shapefile).replace('shp', '_')
-    folder_out = os.path.join(DATA_RESULTS, iso3, 'povert_inline_csv_files')
+            merged_shapefile = pd.concat([merged_shapefile, shapefile], ignore_index = True)  
+            merged_shapefile = merged_shapefile[['iso3', 'GID_1', 'GSAP2_poor', 'GSAP2_po_1', 
+                                                 'GSAP2_po_2', 'income', 'region']] 
+            merged_shapefile = pd.melt(merged_shapefile, id_vars = ['iso3', 'GID_1'], 
+                               value_vars = ['GSAP2_poor', 'GSAP2_po_1', 
+                               'GSAP2_po_2'], var_name = 'poverty_range', 
+                               value_name = 'poverty_rate')
+             
+    fileout = '{}_poverty_results.csv'.format(iso3, merged_shapefile).replace('shp', '_')
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
 
     if not os.path.exists(folder_out):
 
         os.makedirs(folder_out)
 
     path_out = os.path.join(folder_out, fileout)
-
     merged_shapefile.to_csv(path_out, index = False)
     
+    return None
+
+
+def average_poverty_data(iso3):
+    
+    path_in = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files', 
+        '{}_poverty_results.csv'.format(iso3))
+    df = pd.read_csv(path_in)
+
+    poverty = df.groupby(['iso3', 'GID_1', 'poverty_range'])['poverty_rate'].mean()
+    fileout = '{}_poverty_results.csv'.format(iso3)
+    
+
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
+    if not os.path.exists(folder_out):
+
+        os.makedirs(folder_out)
+
+    path_out = os.path.join(folder_out, fileout)
+    poverty.to_csv(path_out)
+
+    print('Summing completed for {}'.format(iso3))
+
     return None
 
 
@@ -455,13 +481,18 @@ def riv_vulnerable_csv(iso3):
             file_path = os.path.join(intersect_folder, file_name)
             shapefile = gpd.read_file(file_path)
             
-            shapefile[['iso3', 'scenario', 'period', 'continent', 'region', 'income']] = ''
+            shapefile[['iso3', 'GID_1', 'scenario', 'period', 'continent', 'region', 'income']] = ''
             scenarios = ['historical', 'rcp4p5', 'rcp8p5']
             periods = ['rp00100', 'rp01000']
+            gid1 = file_name.split('_')[5]
+            gid2 = file_name.split('_')[6]
+            gid = gid1 + '_' + gid2
+            gid = gid.replace('.shp', '')
 
             for i in range(len(shapefile)):
 
                 shapefile['iso3'].loc[i] = iso3
+                shapefile['GID_1'].loc[i] = gid
                 for scenario in scenarios:
 
                     if scenario in file_name:
@@ -476,7 +507,7 @@ def riv_vulnerable_csv(iso3):
             
             shapefile = shapefile.to_crs(crs = 3857) 
             shapefile['area'] = shapefile.geometry.area
-            shapefile = shapefile[['iso3', 'value_1', 'value_2', 'period', 'scenario', 'area',
+            shapefile = shapefile[['iso3', 'GID_1', 'value_1', 'value_2', 'period', 'scenario', 'area',
                                    'continent', 'region', 'income']]
             merged_shapefile = pd.concat([merged_shapefile, shapefile], ignore_index = True)           
 
@@ -518,10 +549,14 @@ def coast_vulnerable_csv(iso3):
             file_path = os.path.join(intersect_folder, file_name)
             shapefile = gpd.read_file(file_path)
             
-            shapefile[['iso3', 'scenario', 'period', 'continent', 
+            shapefile[['iso3', 'GID_1', 'scenario', 'period', 'continent', 
                        'region', 'income']] = ''
             scenarios = ['historical', 'rcp4p5', 'rcp8p5']
             periods = ['rp0100', 'rp1000']
+            gid1 = file_name.split('_')[6]
+            gid2 = file_name.split('_')[7]
+            gid = gid1 + '_' + gid2
+            gid = gid.replace('.shp', '')
 
             for i in range(len(shapefile)):
 
@@ -541,7 +576,7 @@ def coast_vulnerable_csv(iso3):
             shapefile = shapefile.to_crs(crs = 3857) 
             shapefile['area'] = shapefile.geometry.area
 
-            shapefile = shapefile[['iso3', 'value_1', 'value_2', 'period', 'scenario', 
+            shapefile = shapefile[['iso3', 'GID_1', 'value_1', 'value_2', 'period', 'scenario', 
                                    'area', 'continent', 'region', 'income']]
 
             merged_shapefile = pd.concat([merged_shapefile, 
@@ -587,11 +622,11 @@ def sum_hazards(iso3, hazard):
     
     print('Summing {} data for {}'.format(hazard, iso3))
 
-    flood = df.groupby(['iso3', 'scenario', 'period'])['value_2'].mean()
+    flood = df.groupby(['iso3', 'GID_1', 'scenario', 'period'])['value_2'].mean()
     
-    population = df.groupby(['iso3', 'scenario', 'period'])['value_1'].sum()
+    population = df.groupby(['iso3', 'GID_1', 'scenario', 'period'])['value_1'].sum()
     
-    areas = df.groupby(['iso3', 'scenario', 'period'])['area'].sum()
+    areas = df.groupby(['iso3', 'GID_1', 'scenario', 'period'])['area'].sum()
 
     fileout = '{}_{}_depth_average_total.csv'.format(iso3, hazard)
     fileout_2 = '{}_{}_population_total.csv'.format(iso3, hazard)
@@ -613,8 +648,9 @@ def sum_hazards(iso3, hazard):
     population.to_csv(path_out_2)
     areas.to_csv(path_out_3)
     df.to_csv(path_out_4)
+    print('Summing completed for {}'.format(iso3))
     
-    return print('Summing completed for {}'.format(iso3))
+    return None
 
 
 def global_hazard_summation(metric, hazard):
@@ -781,10 +817,14 @@ def gen_agg_hazard_cov_csv(iso3, hazard):
             file_path = os.path.join(intersect_folder, file_name)
             shapefile = gpd.read_file(file_path)
 
-            shapefile[['iso3', 'scenario', 'period', 'technology']] = ''
+            shapefile[['iso3', 'GID_1', 'scenario', 'period', 'technology']] = ''
             scenarios = ['historical', 'rcp4p5','rcp8p5']
             periods = ['rp00100', 'rp0100', 'rp1000', 'rp01000']
             technologies = ['GSM', '3G', '4G']
+            gid1 = file_name.split('_')[6]
+            gid2 = file_name.split('_')[7]
+            gid = gid1 + '_' + gid2
+            gid = gid.replace('.shp', '')
 
             for i in range(len(shapefile)):
 
@@ -807,8 +847,9 @@ def gen_agg_hazard_cov_csv(iso3, hazard):
                         shapefile['technology'].loc[i] = technology
 
                 shapefile['iso3'].loc[i] = iso3
+                shapefile['GID_1'].loc[i] = gid
 
-            shapefile = shapefile[['iso3', 'value_1', 
+            shapefile = shapefile[['iso3', 'GID_1', 'value_1', 
                                 'value_2', 'period', 'scenario', 
                                 'technology', 'geometry']]
 
@@ -860,13 +901,13 @@ def gen_sum_hazard_cov(iso3, hazard):
 
     df = df.fillna('GSM')
 
-    flood = df.groupby(['iso3', 'scenario', 'technology',
+    flood = df.groupby(['iso3', 'GID_1', 'scenario', 'technology',
                         'period'])['value_2'].mean()
     
-    population = df.groupby(['iso3', 'scenario', 'technology',
+    population = df.groupby(['iso3', 'GID_1', 'scenario', 'technology',
                              'period'])['value_1'].sum()
     
-    areas = df.groupby(['iso3', 'scenario', 'technology',
+    areas = df.groupby(['iso3', 'GID_1', 'scenario', 'technology',
                         'period'])['area'].sum()
 
     fileout = '{}_{}_depth_unconnected_total.csv'.format(iso3, hazard)
@@ -1027,22 +1068,124 @@ def global_cov_haz_summation(metric, hazard):
     return None
 
 
+def agg_hazard_cov_poor_csv(iso3, hazard):
+
+    """
+    This function merges the poverty 
+    data with coverage and hazard layers 
+    to establish the percentage of the 
+    population that is poor, unconnected 
+    and vulnerable to climate change 
+    driven natural hazards.
+    Parameters
+    ----------
+    iso3 : string
+        Country ISO3 code
+    hazard : string
+        Hazard quantified: i.e `riverine`, `coastal`
+        or `tropical`.
+    """
+    poverty_data = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files', 
+        '{}_poverty_results.csv'.format(iso3))
+
+    df = pd.read_csv(poverty_data)
+    df3 = pd.DataFrame()
+
+    if hazard == 'riverine':
+
+        print('Processing {} {} csv'.format(iso3, hazard))
+        vulnerability_results = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files', 
+        '{}_riverine_population_unconnected_total.csv'.format(iso3))
+
+    else:
+
+        print('Processing {} {} csv'.format(iso3, hazard))
+        vulnerability_results = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files', 
+        '{}_coastal_population_unconnected_total.csv'.format(iso3))
+
+    df1 = pd.read_csv(vulnerability_results)
+
+    df2 = df1.merge(df, on = 'GID_1', how = 'outer').reset_index(drop = True)
+    df2['vul_pop'] = ''
+
+    for i in range(len(df2)):
+          
+        vul_pop = ((df2['poverty_rate'].loc[i])/100) * df2['value_1'].loc[i]
+        
+        df2['vul_pop'].loc[i] = (round(vul_pop))
+    
+    df2 = df2.drop(columns = ['iso3_y', 'value_1', 'poverty_rate'])
+    df2.rename(columns = {'iso3_x': 'iso3'}, inplace = True)
+    df3 = pd.concat([df3, df2], ignore_index = True) 
+
+    fileout = '{}_poor_unconnected_{}_vulnerable_results.csv'.format(iso3, hazard)
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
+
+    if not os.path.exists(folder_out):
+
+        os.makedirs(folder_out)
+
+    path_out = os.path.join(folder_out, fileout)
+    df3.to_csv(path_out, index = False)
+
+    return None
+
+
+def sum_hazard_cov_poor_csv(iso3, hazard):
+    """
+    This function calculates the total number of poor and unconnected 
+    people vulnerable to hazards, the area they occupy and the
+    average inundation depth of the floods. It also regenerates 
+    the aggregate results by cellphone technology for each country.
+
+    Parameters
+    ----------
+    iso3 : string
+        Country ISO3 code
+    hazard : string
+        Hazard quantified: i.e `riverine`, `coastal`
+        or `tropical`.
+    """
+
+    path_in = os.path.join(
+        DATA_RESULTS, iso3, 'vulnerable_csv_files', 
+        '{}_poor_unconnected_{}_vulnerable_results.csv'.format(iso3, hazard))
+    
+    df = pd.read_csv(path_in)
+    
+    print('Summing coverage, hazard and {} {} poverty data'.format(iso3, hazard))
+    
+    population = df.groupby(['iso3', 'GID_1', 'scenario', 'technology',
+                             'period'])['value_1'].sum()
+    
+    areas = df.groupby(['iso3', 'GID_1', 'scenario', 'technology',
+                        'period'])['area'].sum()
+
+    fileout = '{}_{}_depth_unconnected_total.csv'.format(iso3, hazard)
+    fileout_2 = '{}_{}_population_unconnected_total.csv'.format(iso3, hazard)
+    fileout_3 = '{}_{}_area_unconnected_total.csv'.format(iso3, hazard)
+    fileout_4 = '{}_{}_unconnected_aggregated_results.csv'.format(iso3, hazard)
+
+    folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
+
+    return None 
+
 if __name__ == '__main__':
 
     isos = os.listdir(DATA_RESULTS)
-    isos = ['IDN']
+    isos = ['RUS', 'COL']
     for iso in isos:
 
         try:
 
             ######### UNCONNECTED POPULATION #########
             folder = os.path.join( DATA_RESULTS, iso, 'pop_unconnected')
-            #generate_unconnected_csv(folder, iso)
-            #generate_cell_summation(iso)
+            generate_unconnected_csv(folder, iso)
+            generate_cell_summation(iso)
 
             ######### POVERTY IN-LINE POPULATION #########
-            #folder = os.path.join(DATA_RESULTS, iso, 'poor_population')
-            #generate_poverty_csv(folder, iso)
+            #generate_poverty_csv(iso)
+            #average_poverty_data(iso)
 
             ######### VULNERABLE POPULATION TO RIVERINE FLOODING #########
             #riv_vulnerable_csv(iso)
@@ -1057,6 +1200,7 @@ if __name__ == '__main__':
             #gen_agg_hazard_cov_csv(iso, 'coastal')
             #gen_sum_hazard_cov(iso, 'riverine')
             #gen_sum_hazard_cov(iso, 'coastal')
+            #agg_hazard_cov_poor_csv(iso, 'riverine')
 
         except:
 
