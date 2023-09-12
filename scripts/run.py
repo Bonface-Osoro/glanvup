@@ -2,7 +2,7 @@ import configparser
 import os
 import warnings
 import pandas as pd
-from glanvup.preprocess import ProcessCountry, ProcessRegions, ProcessPopulation, PovertyProcess
+from glanvup.preprocessing import ProcessCountry, ProcessRegions, ProcessPopulation, PovertyProcess
 pd.options.mode.chained_assignment = None
 warnings.filterwarnings('ignore')
 

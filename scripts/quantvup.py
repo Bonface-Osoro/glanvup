@@ -1180,11 +1180,11 @@ if __name__ == '__main__':
 
             ######### UNCONNECTED POPULATION #########
             folder = os.path.join( DATA_RESULTS, iso, 'pop_unconnected')
-            generate_unconnected_csv(folder, iso)
-            generate_cell_summation(iso)
+            #generate_unconnected_csv(folder, iso)
+            #generate_cell_summation(iso)
 
             ######### POVERTY IN-LINE POPULATION #########
-            #generate_poverty_csv(iso)
+            generate_poverty_csv(iso)
             #average_poverty_data(iso)
 
             ######### VULNERABLE POPULATION TO RIVERINE FLOODING #########

@@ -45,7 +45,7 @@ for idx, country in countries.iterrows():
             #flooding.process_flood_tiff()
             #flooding.process_flood_shapefile()
             
-            intersection = IntersectLayers(countries['iso3'].loc[idx], cell, file)
+            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
             #intersection.poverty_pop()
             #intersection.pop_flood()
             #intersection.pop_coverage()

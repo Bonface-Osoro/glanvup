@@ -1,4 +1,4 @@
-# Global Assessment of Natural Hazards towards Vulnerable and Unconnected Population (glanhavup)
+# Global Assessment of Natural Hazards towards Vulnerable and Unconnected Population (glanvup)
 Over the next century we are expected to experience an increase in the frequency and severity of climate-related hazards, including coastal flooding, riverine flooding, and tropical storms. Dealing with extreme events is considerably easy for the affluent, who have the resources to vacate to a safer location and replace damaged property. In contrast, those living on the poverty line (US$ 2 per day) often must shelter in place and may have their entire livelihood disrupted from storm damage. 
 
 Owning a cell phone is one way that vulnerable people can mitigate their vulnerability to extreme weather events. For example, voice and data connectivity can help in accessing early warning messages, calling for emergency services, and obtaining post-event financial aid via mobile money transfer (Opitz-Stapleton et al., 2019). However, there are still vast global disparities in those who have easy access to mobile cellular services, and those who do not.
