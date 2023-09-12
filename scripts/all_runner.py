@@ -4,7 +4,7 @@ import configparser
 import pandas as pd
 from glanvup.rizard import FloodProcess
 from glanvup.cozard import CoastProcess
-from glanvup.preprocess import WealthProcess
+from glanvup.preprocess import PovertyProcess
 from glanvup.coverage import CoverageProcess
 from glanvup.intersections import IntersectLayers
 from glanvup.continents import south_coast
@@ -31,21 +31,25 @@ income_group = ['LIC', 'LMC', 'UMC']
 for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+    #if not country['iso3'] == 'RUS':
 
         continue 
+    
     flood_files = ['']
     for file in flood_files:
 
         try:
-            #flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
+            flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
             #flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
             #flooding.process_flood_tiff()
             #flooding.process_flood_shapefile()
-
-            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            intersection.pop_poverty()
+            
+            intersection = IntersectLayers(countries['iso3'].loc[idx], cell, file)
+            #intersection.poverty_pop()
             #intersection.pop_flood()
+            #intersection.pop_coverage()
+            #intersection.vulri_intersect_all()
             #intersection.coverage_rizard()
             
             #intersection.vulri_intersect_all()
