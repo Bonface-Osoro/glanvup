@@ -68,21 +68,7 @@ class IntersectLayers:
 
         return None
     
-
-    def pop_poverty(self):
-
-        population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'shapefiles')
-        poverty_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'poverty', 'regions')
-        folder_out_1 = os.path.join(DATA_RESULTS, self.country_iso3, 'poor_population')
-        if not os.path.exists(folder_out_1):
-
-            os.makedirs(folder_out_1)
-
-        IntersectLayers.intersect_poverty(self, poverty_folder, population_folder, folder_out_1)
-
-        return None
-    
-
+ 
     def pop_cozard(self):
 
         population_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'population', 'shapefiles')

@@ -1147,7 +1147,7 @@ def global_sum_cov_haz_poor(metric, hazard):
 if __name__ == '__main__':
 
     isos = os.listdir(DATA_RESULTS)
-    isos = ['SLE']
+    #isos = ['SLE']
     for iso in isos:
 
         try:
@@ -1166,18 +1166,18 @@ if __name__ == '__main__':
             #sum_hazards(iso, 'riverine')
 
             ######### VULNERABLE POPULATION TO COASTAL FLOODING #########
-            coast_vulnerable_csv(iso)
-            sum_hazards(iso, 'coastal')
+            #coast_vulnerable_csv(iso)
+            #sum_hazards(iso, 'coastal')
 
             ## UNCONNECTED & VULNERABLE POPULATION TO HAZARDS ##
             #gen_agg_hazard_cov_csv(iso, 'riverine')
-            gen_agg_hazard_cov_csv(iso, 'coastal')
+            #gen_agg_hazard_cov_csv(iso, 'coastal')
             #gen_sum_hazard_cov(iso, 'riverine')
-            gen_sum_hazard_cov(iso, 'coastal')
+            #gen_sum_hazard_cov(iso, 'coastal')
             #agg_hazard_cov_poor_csv(iso, 'riverine')
-            agg_hazard_cov_poor_csv(iso, 'coastal')
+            #agg_hazard_cov_poor_csv(iso, 'coastal')
             #sum_hazard_cov_poor_csv(iso, 'riverine')
-            sum_hazard_cov_poor_csv(iso, 'coastal')
+            #sum_hazard_cov_poor_csv(iso, 'coastal')
 
         except:
 
@@ -1189,13 +1189,15 @@ if __name__ == '__main__':
     ## AGGREGATE GLOBAL POPULATION VULNERABLE TO NATURAL HAZARDS ##
     #global_hazard_summation('area', 'riverine')
     #global_hazard_summation('population', 'riverine')
-    #global_hazard_summation('area', 'coastal')
-    #global_hazard_summation('population', 'coastal')
+    global_hazard_summation('area', 'coastal')
+    global_hazard_summation('population', 'coastal')
 
     ## AGGREGATE GLOBAL UNCONNECTED POPULATION VULNERABLE TO NATURAL HAZARDS ##
     #global_cov_haz_summation('area', 'riverine')
     #global_cov_haz_summation('population', 'riverine')
-    #global_cov_haz_summation('area', 'coastal')
-    #global_cov_haz_summation('population', 'coastal')
+    global_cov_haz_summation('area', 'coastal')
+    global_cov_haz_summation('population', 'coastal')
     #global_sum_cov_haz_poor('population', 'riverine')
     #global_sum_cov_haz_poor('area', 'riverine')
+    global_sum_cov_haz_poor('population', 'coastal')
+    global_sum_cov_haz_poor('area', 'coastal')
