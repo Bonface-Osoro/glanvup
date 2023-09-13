@@ -28,34 +28,27 @@ coast_files = os.listdir(coastal_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
-'''for idx, country in countries.iterrows():
+for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
     #if not country['iso3'] == 'RUS':
 
         continue 
     
-    flood_files = ['']
     for file in flood_files:
 
         try:
             flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
-            #flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
-            #flooding.process_flood_tiff()
-            #flooding.process_flood_shapefile()
+            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
+            flooding.process_flood_tiff()
+            flooding.process_flood_shapefile()
             
             intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            #intersection.poverty_pop()
-            #intersection.pop_flood()
-            #intersection.pop_coverage()
-            #intersection.vulri_intersect_all()
-            #intersection.coverage_rizard()
-            
-            #intersection.vulri_intersect_all()
-            #wealths = WealthProcess(path, countries['iso3'].loc[idx])
-            #wealths.process_national_rwi()
-            #wealths.process_regional_rwi()
+            intersection.pop_flood()
+            intersection.pop_coverage()
+            intersection.vulri_intersect_all()
+            intersection.coverage_rizard()
 
             #coverages = CoverageProcess(path, countries['iso3'].loc[idx])
             #coverages.process_national_coverage()
@@ -63,9 +56,9 @@ income_group = ['LIC', 'LMC', 'UMC']
 
         except:
 
-            pass'''
+            pass
         
-for idx, country in countries.iterrows():
+'''for idx, country in countries.iterrows():
 
     #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
     if not country['iso3'] == 'ARG':
@@ -89,4 +82,4 @@ for idx, country in countries.iterrows():
 
         except:
 
-            pass
+            pass'''
