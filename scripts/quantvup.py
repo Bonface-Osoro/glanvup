@@ -316,147 +316,6 @@ def average_poverty_data(iso3):
     return None
 
 
-def globally_poor():
-    '''
-    This function averages all the individual 
-    unconnected population into a single file. 
-    It also classifies the individual countries 
-    into specific continnets, regions and income group.
-
-    '''
-
-    isos = os.listdir(DATA_RESULTS)
-    combined_df = pd.DataFrame()
-
-    for iso3 in isos:
-        
-        print('Processing continent, region and income information for {} poverty csv file'.format(iso3))
-
-        try:
-
-            csv_path = os.path.join(DATA_RESULTS, iso3, 'povert_inline_csv_files')
-
-            for root, _, files in os.walk(csv_path):
-
-                for file in files:
-
-                    if file.endswith('.csv'):
-
-                        file_path = os.path.join(root, file)
-                        df = pd.read_csv(file_path)
-                        df['continent'] = ''
-
-                        for i in range(len(df)):
-                            if iso3 in asia:
-
-                                df['continent'].loc[i] = 'Asia'
-
-                            elif iso3 in africa:
-
-                                df['continent'].loc[i] = 'Africa'
-
-                            elif iso3 in south_America:
-
-                                df['continent'].loc[i] = 'South America'
-
-                            elif iso3 in north_america:
-
-                                df['continent'].loc[i] = 'North America'
-
-                            elif iso3 in europe:
-
-                                df['continent'].loc[i] = 'Europe'
-
-                            elif iso3 in oceania:
-
-                                df['continent'].loc[i] = 'Oceania'
-
-                            else:
-
-                                df['continent'].loc[i] = 'Others'
-
-                        for i in range(len(df)):
-
-                            if iso3 in sub_saharan_africa:
-
-                                df['region'].loc[i] = 'SSA'
-
-                            elif iso3 in east_asia_pacific:
-
-                                df['region'].loc[i] = 'EAP'
-
-                            elif iso3 in europe_central_asia:
-
-                                df['region'].loc[i] = 'ECA'
-
-                            elif iso3 in latin_and_caribbean:
-
-                                df['region'].loc[i] = 'LAC'
-
-                            elif iso3 in middle_north_africa:
-
-                                df['region'].loc[i] = 'MENA'
-
-                            elif iso3 in north_america_reg:
-
-                                df['region'].loc[i] = 'NA'
-
-                            else: 
-
-                                df['region'].loc[i] = 'SA'
-
-                        for i in range(len(df)):
-
-                            if iso3 in low_income:
-
-                                df['income'].loc[i] = 'LIC'
-
-                            elif iso3 in low_middle:
-
-                                df['income'].loc[i] = 'LMC'
-
-                            elif iso3 in upper_income:
-
-                                df['income'].loc[i] = 'UMC'
-
-                            else: 
-
-                                df['income'].loc[i] = 'HIC'
-
-                        df['poverty_range'] = ''
-
-                        for i in range(len(df)):
-
-                            if df['rwi'].loc[i] <= 0:
-
-                                df['poverty_range'].loc[i] = '< 0'
-
-                            elif df['rwi'].loc[i] >= 0 and df['rwi'].loc[i] <= 0.5:
-
-                                df['poverty_range'].loc[i] = '0 - 0.5'
-
-                            else:
-
-                                df['poverty_range'].loc[i] = '> 0.5'
-                
-                        combined_df = pd.concat([combined_df, df], ignore_index = True)
-                        
-                        fileout = 'b_poverty_inline_global_results.csv'.format()
-                        folder_out = os.path.join(BASE_PATH, 'global_results')
-
-                        if not os.path.exists(folder_out):
-
-                            os.makedirs(folder_out)
-
-                        path_out = os.path.join(folder_out, fileout)
-                        combined_df.to_csv(path_out, index = False)
-        except:
-            
-            pass
-
-    return None
-
-
 def riv_vulnerable_csv(iso3):
     """
     This function generate a single csv file of 
@@ -481,7 +340,7 @@ def riv_vulnerable_csv(iso3):
             file_path = os.path.join(intersect_folder, file_name)
             shapefile = gpd.read_file(file_path)
             
-            shapefile[['iso3', 'GID_1', 'scenario', 'period', 'continent', 'region', 'income']] = ''
+            shapefile[['iso3', 'GID_1', 'scenario', 'period', 'region', 'income']] = ''
             scenarios = ['historical', 'rcp4p5', 'rcp8p5']
             periods = ['rp00100', 'rp01000']
             gid1 = file_name.split('_')[5]
@@ -508,7 +367,7 @@ def riv_vulnerable_csv(iso3):
             shapefile = shapefile.to_crs(crs = 3857) 
             shapefile['area'] = shapefile.geometry.area
             shapefile = shapefile[['iso3', 'GID_1', 'value_1', 'value_2', 'period', 'scenario', 'area',
-                                   'continent', 'region', 'income']]
+                                   'region', 'income']]
             merged_shapefile = pd.concat([merged_shapefile, shapefile], ignore_index = True)           
 
     fileout = '{}_vulnerable_riverine.csv'.format(iso3, merged_shapefile).replace('shp', '_')
@@ -561,6 +420,7 @@ def coast_vulnerable_csv(iso3):
             for i in range(len(shapefile)):
 
                 shapefile['iso3'].loc[i] = iso3
+                shapefile['GID_1'].loc[i] = gid
                 for scenario in scenarios:
 
                     if scenario in file_name:
@@ -622,11 +482,11 @@ def sum_hazards(iso3, hazard):
     
     print('Summing {} data for {}'.format(hazard, iso3))
 
-    flood = df.groupby(['iso3', 'GID_1', 'scenario', 'period'])['value_2'].mean()
+    flood = df.groupby(['iso3', 'scenario', 'period'])['value_2'].mean()
     
-    population = df.groupby(['iso3', 'GID_1', 'scenario', 'period'])['value_1'].sum()
+    population = df.groupby(['iso3', 'scenario', 'period'])['value_1'].sum()
     
-    areas = df.groupby(['iso3', 'GID_1', 'scenario', 'period'])['area'].sum()
+    areas = df.groupby(['iso3', 'scenario', 'period'])['area'].sum()
 
     fileout = '{}_{}_depth_average_total.csv'.format(iso3, hazard)
     fileout_2 = '{}_{}_population_total.csv'.format(iso3, hazard)
@@ -821,10 +681,18 @@ def gen_agg_hazard_cov_csv(iso3, hazard):
             scenarios = ['historical', 'rcp4p5','rcp8p5']
             periods = ['rp00100', 'rp0100', 'rp1000', 'rp01000']
             technologies = ['GSM', '3G', '4G']
-            gid1 = file_name.split('_')[6]
-            gid2 = file_name.split('_')[7]
-            gid = gid1 + '_' + gid2
-            gid = gid.replace('.shp', '')
+            if hazard == 'riverine':
+
+                gid1 = file_name.split('_')[6]
+                gid2 = file_name.split('_')[7]
+                gid = gid1 + '_' + gid2
+                gid = gid.replace('.shp', '')
+
+            else:
+                gid1 = file_name.split('_')[7]
+                gid2 = file_name.split('_')[8]
+                gid = gid1 + '_' + gid2
+                gid = gid.replace('.shp', '')
 
             for i in range(len(shapefile)):
 
@@ -1089,34 +957,25 @@ def agg_hazard_cov_poor_csv(iso3, hazard):
         '{}_poverty_results.csv'.format(iso3))
 
     df = pd.read_csv(poverty_data)
-    df3 = pd.DataFrame()
 
     if hazard == 'riverine':
 
         print('Processing {} {} csv'.format(iso3, hazard))
         vulnerability_results = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files', 
-        '{}_riverine_population_unconnected_total.csv'.format(iso3))
+        '{}_riverine_aggregated_results.csv'.format(iso3))
 
     else:
 
         print('Processing {} {} csv'.format(iso3, hazard))
         vulnerability_results = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files', 
-        '{}_coastal_population_unconnected_total.csv'.format(iso3))
+        '{}_coastal_aggregated_results.csv'.format(iso3))
 
     df1 = pd.read_csv(vulnerability_results)
 
     df2 = df1.merge(df, on = 'GID_1', how = 'outer').reset_index(drop = True)
-    df2['vul_pop'] = ''
-
-    for i in range(len(df2)):
-          
-        vul_pop = ((df2['poverty_rate'].loc[i])/100) * df2['value_1'].loc[i]
-        
-        df2['vul_pop'].loc[i] = (round(vul_pop))
-    
+    df2['vul_pop'] = df2['value_1']*((df2['poverty_rate'])/100)
     df2 = df2.drop(columns = ['iso3_y', 'value_1', 'poverty_rate'])
     df2.rename(columns = {'iso3_x': 'iso3'}, inplace = True)
-    df3 = pd.concat([df3, df2], ignore_index = True) 
 
     fileout = '{}_poor_unconnected_{}_vulnerable_results.csv'.format(iso3, hazard)
     folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
@@ -1126,7 +985,7 @@ def agg_hazard_cov_poor_csv(iso3, hazard):
         os.makedirs(folder_out)
 
     path_out = os.path.join(folder_out, fileout)
-    df3.to_csv(path_out, index = False)
+    df2.to_csv(path_out, index = False)
 
     return None
 
@@ -1155,25 +1014,140 @@ def sum_hazard_cov_poor_csv(iso3, hazard):
     
     print('Summing coverage, hazard and {} {} poverty data'.format(iso3, hazard))
     
-    population = df.groupby(['iso3', 'GID_1', 'scenario', 'technology',
-                             'period'])['value_1'].sum()
+    population = df.groupby(['iso3', 'scenario', 'poverty_range',
+                             'period'])['vul_pop'].sum()
     
-    areas = df.groupby(['iso3', 'GID_1', 'scenario', 'technology',
+    areas = df.groupby(['iso3', 'scenario','poverty_range',
                         'period'])['area'].sum()
 
-    fileout = '{}_{}_depth_unconnected_total.csv'.format(iso3, hazard)
-    fileout_2 = '{}_{}_population_unconnected_total.csv'.format(iso3, hazard)
-    fileout_3 = '{}_{}_area_unconnected_total.csv'.format(iso3, hazard)
-    fileout_4 = '{}_{}_unconnected_aggregated_results.csv'.format(iso3, hazard)
+    fileout_2 = '{}_{}_population_unconnected_poor_total.csv'.format(iso3, hazard)
+    fileout_3 = '{}_{}_area_unconnected_poor_total.csv'.format(iso3, hazard)
+    fileout_4 = '{}_{}_unconnected_aggregated_poor_results.csv'.format(iso3, hazard)
 
     folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
 
+    if not os.path.exists(folder_out):
+
+        os.makedirs(folder_out)
+
+    path_out_2 = os.path.join(folder_out, fileout_2)
+    path_out_3 = os.path.join(folder_out, fileout_3)
+    path_out_4 = os.path.join(folder_out, fileout_4)
+
+    population.to_csv(path_out_2)
+    areas.to_csv(path_out_3)
+    df.to_csv(path_out_4)
+
     return None 
+
+
+def global_sum_cov_haz_poor(metric, hazard):
+    '''
+    This function averages all the individual poor,
+    unconnceted and vulnerable population to hazards 
+    into a single file. It also classifies the 
+    individual countries into specific continnets, 
+    regions and income group.
+
+    Parameters
+    ----------
+    metric : string
+        Attribute being quantified. It can be area, 
+        flood depth or population under flooding
+        valid options are; 'area', 'depth' & 'population'
+
+    hazard : string
+        Hazard quantified: i.e `riverine`, `coastal`
+        or `tropical`.
+    '''
+    print('Aggregating global {} data of poor, unconnected & population vulnerable to {} flooding'.format(metric, hazard))
+    isos = os.listdir(DATA_RESULTS)
+
+    combined_df = pd.DataFrame()
+
+    for iso3 in isos:
+        
+        csv_path = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
+
+        for root, _, files in os.walk(csv_path):
+
+            for file in files:
+
+                if file.endswith('{}_{}_unconnected_poor_total.csv'.format(hazard, metric)):
+
+                    file_path = os.path.join(root, file)
+                    df = pd.read_csv(file_path)
+                    
+                    columns_to_round = ['iso3', 'scenario', 'period']
+                    df[columns_to_round] = df[columns_to_round].round(4)
+                    df[['region', 'income']] = ''
+
+                    for i in range(len(df)):
+
+                        if iso3 in sub_saharan_africa:
+
+                            df['region'].loc[i] = 'SSA'
+                            
+                        elif iso3 in east_asia_pacific:
+
+                            df['region'].loc[i] = 'EAP'
+
+                        elif iso3 in europe_central_asia:
+
+                            df['region'].loc[i] = 'ECA'
+
+                        elif iso3 in latin_and_caribbean:
+
+                            df['region'].loc[i] = 'LAC'
+
+                        elif iso3 in middle_north_africa:
+
+                            df['region'].loc[i] = 'MENA'
+
+                        elif iso3 in north_america_reg:
+
+                            df['region'].loc[i] = 'NA'
+
+                        else: 
+
+                            df['region'].loc[i] = 'SA'
+
+                    for i in range(len(df)):
+
+                        if iso3 in low_income:
+
+                            df['income'].loc[i] = 'LIC'
+
+                        elif iso3 in low_middle:
+
+                            df['income'].loc[i] = 'LMC'
+
+                        elif iso3 in upper_income:
+
+                            df['income'].loc[i] = 'UMC'
+
+                        else: 
+
+                            df['income'].loc[i] = 'HIC'
+                    
+                    combined_df = pd.concat([combined_df, df], ignore_index = True)
+                    
+                    fileout = 'e_unconnected_poor_{}_{}_results.csv'.format(hazard, metric)
+                    folder_out = os.path.join(BASE_PATH, 'global_results')
+
+                    if not os.path.exists(folder_out):
+
+                        os.makedirs(folder_out)
+
+                    path_out = os.path.join(folder_out, fileout)
+                    combined_df.to_csv(path_out, index = False)
+
+    return None
 
 if __name__ == '__main__':
 
     isos = os.listdir(DATA_RESULTS)
-    isos = ['RUS', 'COL']
+    isos = ['SLE']
     for iso in isos:
 
         try:
@@ -1184,7 +1158,7 @@ if __name__ == '__main__':
             #generate_cell_summation(iso)
 
             ######### POVERTY IN-LINE POPULATION #########
-            generate_poverty_csv(iso)
+            #generate_poverty_csv(iso)
             #average_poverty_data(iso)
 
             ######### VULNERABLE POPULATION TO RIVERINE FLOODING #########
@@ -1192,15 +1166,18 @@ if __name__ == '__main__':
             #sum_hazards(iso, 'riverine')
 
             ######### VULNERABLE POPULATION TO COASTAL FLOODING #########
-            #coast_vulnerable_csv(iso)
-            #sum_hazards(iso, 'coastal')
+            coast_vulnerable_csv(iso)
+            sum_hazards(iso, 'coastal')
 
             ## UNCONNECTED & VULNERABLE POPULATION TO HAZARDS ##
             #gen_agg_hazard_cov_csv(iso, 'riverine')
-            #gen_agg_hazard_cov_csv(iso, 'coastal')
+            gen_agg_hazard_cov_csv(iso, 'coastal')
             #gen_sum_hazard_cov(iso, 'riverine')
-            #gen_sum_hazard_cov(iso, 'coastal')
+            gen_sum_hazard_cov(iso, 'coastal')
             #agg_hazard_cov_poor_csv(iso, 'riverine')
+            agg_hazard_cov_poor_csv(iso, 'coastal')
+            #sum_hazard_cov_poor_csv(iso, 'riverine')
+            sum_hazard_cov_poor_csv(iso, 'coastal')
 
         except:
 
@@ -1208,9 +1185,6 @@ if __name__ == '__main__':
     
     ## AGGREGATE GLOBAL UNCONNECTED POPULATION ##
     #global_unconnected()
-
-    ## AGGREGATE GLOBAL POVERTY IN-LINE POPULATION ##
-    #globally_poor()
 
     ## AGGREGATE GLOBAL POPULATION VULNERABLE TO NATURAL HAZARDS ##
     #global_hazard_summation('area', 'riverine')
@@ -1223,3 +1197,5 @@ if __name__ == '__main__':
     #global_cov_haz_summation('population', 'riverine')
     #global_cov_haz_summation('area', 'coastal')
     #global_cov_haz_summation('population', 'coastal')
+    #global_sum_cov_haz_poor('population', 'riverine')
+    #global_sum_cov_haz_poor('area', 'riverine')
