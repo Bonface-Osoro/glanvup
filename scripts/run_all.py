@@ -4,7 +4,7 @@ import configparser
 import pandas as pd
 from glanvup.rizard import FloodProcess
 from glanvup.cozard import CoastProcess
-from glanvup.preprocess import PovertyProcess
+from glanvup.preprocessing import PovertyProcess
 from glanvup.coverage import CoverageProcess
 from glanvup.intersections import IntersectLayers
 from glanvup.continents import south_coast
@@ -28,7 +28,7 @@ coast_files = os.listdir(coastal_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
-for idx, country in countries.iterrows():
+'''for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
     #if not country['iso3'] == 'RUS':
@@ -63,9 +63,14 @@ for idx, country in countries.iterrows():
 
         except:
 
-            pass
+            pass'''
         
-'''for coast in south_coast:
+for idx, country in countries.iterrows():
+
+    #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+    if not country['iso3'] == 'ARG':
+
+        continue
 
     for file in coast_files:
 
@@ -73,16 +78,15 @@ for idx, country in countries.iterrows():
 
             coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
 
-            coastal = CoastProcess(path, coast, coastal_tiff)
+            coastal = CoastProcess(path, countries['iso3'].loc[idx], coastal_tiff)
             coastal.process_flood_tiff() 
             coastal.process_flood_shapefile()
 
-            intersection = IntersectLayers(coast, 'GSM', file)
+            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
             intersection.pop_cozard()
+            intersection.vulco_intersect_all()
             intersection.coverage_cozard()
-            #intersection.popcozard_coverage()
-            #intersection.intersect_all_cozard()
 
         except:
 
-            pass'''
+            pass
