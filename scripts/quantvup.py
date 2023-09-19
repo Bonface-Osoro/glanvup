@@ -341,7 +341,7 @@ def riv_vulnerable_csv(iso3):
             shapefile = gpd.read_file(file_path)
             
             shapefile[['iso3', 'GID_1', 'scenario', 'period', 'region', 'income']] = ''
-            scenarios = ['historical', 'rcp4p5', 'rcp8p5']
+            scenarios = ['historical', 'rcp4p5_0000HadGEM2-ES_2050', 'rcp8p5_0000HadGEM2-ES_2050']
             periods = ['rp00100', 'rp01000']
             gid1 = file_name.split('_')[5]
             gid2 = file_name.split('_')[6]
@@ -358,6 +358,10 @@ def riv_vulnerable_csv(iso3):
 
                         shapefile['scenario'].loc[i] = scenario
 
+                    else: 
+
+                        pass
+
                 for period in periods:
 
                     if period in file_name:
@@ -368,7 +372,10 @@ def riv_vulnerable_csv(iso3):
             shapefile['area'] = shapefile.geometry.area
             shapefile = shapefile[['iso3', 'GID_1', 'value_1', 'value_2', 'period', 'scenario', 'area',
                                    'region', 'income']]
-            merged_shapefile = pd.concat([merged_shapefile, shapefile], ignore_index = True)           
+            merged_shapefile = pd.concat([merged_shapefile, shapefile], ignore_index = True)  
+    
+    merged_shapefile = merged_shapefile.dropna()
+
 
     fileout = '{}_vulnerable_riverine.csv'.format(iso3, merged_shapefile).replace('shp', '_')
     folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
@@ -410,7 +417,7 @@ def coast_vulnerable_csv(iso3):
             
             shapefile[['iso3', 'GID_1', 'scenario', 'period', 'continent', 
                        'region', 'income']] = ''
-            scenarios = ['historical', 'rcp4p5', 'rcp8p5']
+            scenarios = ['historical', 'rcp4p5_wtsub_2050', 'rcp8p5_wtsub_2050']
             periods = ['rp0100', 'rp1000']
             gid1 = file_name.split('_')[6]
             gid2 = file_name.split('_')[7]
@@ -427,6 +434,10 @@ def coast_vulnerable_csv(iso3):
 
                         shapefile['scenario'].loc[i] = scenario
 
+                    else:
+
+                        pass
+
                 for period in periods:
 
                     if period in file_name:
@@ -439,9 +450,8 @@ def coast_vulnerable_csv(iso3):
             shapefile = shapefile[['iso3', 'GID_1', 'value_1', 'value_2', 'period', 'scenario', 
                                    'area', 'continent', 'region', 'income']]
 
-            merged_shapefile = pd.concat([merged_shapefile, 
-                                          shapefile], 
-                                          ignore_index = True)           
+            merged_shapefile = pd.concat([merged_shapefile, shapefile], ignore_index = True)  
+    merged_shapefile = merged_shapefile.dropna()         
 
     fileout = '{}_vulnerable_coastal.csv'.format(iso3, merged_shapefile).replace('shp', '_')
     folder_out = os.path.join(DATA_RESULTS, iso3, 'vulnerable_csv_files')
@@ -1147,7 +1157,6 @@ def global_sum_cov_haz_poor(metric, hazard):
 if __name__ == '__main__':
 
     isos = os.listdir(DATA_RESULTS)
-    #isos = ['SLE']
     for iso in isos:
 
         try:
@@ -1166,18 +1175,18 @@ if __name__ == '__main__':
             #sum_hazards(iso, 'riverine')
 
             ######### VULNERABLE POPULATION TO COASTAL FLOODING #########
-            #coast_vulnerable_csv(iso)
-            #sum_hazards(iso, 'coastal')
+            coast_vulnerable_csv(iso)
+            sum_hazards(iso, 'coastal')
 
             ## UNCONNECTED & VULNERABLE POPULATION TO HAZARDS ##
             #gen_agg_hazard_cov_csv(iso, 'riverine')
-            #gen_agg_hazard_cov_csv(iso, 'coastal')
+            gen_agg_hazard_cov_csv(iso, 'coastal')
             #gen_sum_hazard_cov(iso, 'riverine')
-            #gen_sum_hazard_cov(iso, 'coastal')
+            gen_sum_hazard_cov(iso, 'coastal')
             #agg_hazard_cov_poor_csv(iso, 'riverine')
-            #agg_hazard_cov_poor_csv(iso, 'coastal')
+            agg_hazard_cov_poor_csv(iso, 'coastal')
             #sum_hazard_cov_poor_csv(iso, 'riverine')
-            #sum_hazard_cov_poor_csv(iso, 'coastal')
+            sum_hazard_cov_poor_csv(iso, 'coastal')
 
         except:
 

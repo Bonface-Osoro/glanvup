@@ -28,7 +28,7 @@ coast_files = os.listdir(coastal_folder)
 countries = pd.read_csv(path, encoding = 'latin-1')
 income_group = ['LIC', 'LMC', 'UMC']
 
-for idx, country in countries.iterrows():
+'''for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
     #if not country['iso3'] == 'RUS':
@@ -46,7 +46,6 @@ for idx, country in countries.iterrows():
             
             intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
             intersection.pop_flood()
-            intersection.pop_coverage()
             intersection.vulri_intersect_all()
             intersection.coverage_rizard()
 
@@ -56,12 +55,12 @@ for idx, country in countries.iterrows():
 
         except:
 
-            pass
+            pass'''
         
-'''for idx, country in countries.iterrows():
+for idx, country in countries.iterrows():
 
-    #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
-    if not country['iso3'] == 'ARG':
+    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+    #if not country['iso3'] == 'ARG':
 
         continue
 
@@ -82,4 +81,4 @@ for idx, country in countries.iterrows():
 
         except:
 
-            pass'''
+            pass
