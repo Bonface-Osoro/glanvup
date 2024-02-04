@@ -17,7 +17,7 @@ CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 
 DATA_RAW = os.path.join(BASE_PATH, 'raw')
-DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
+DATA_PROCESSED = os.path.join(BASE_PATH, '..', 'results', 'processed')
 
 
 def clean_coverage(x):
@@ -83,7 +83,7 @@ class CoverageProcess:
 
     def process_national_coverage(self):
 
-        countries = pd.read_csv(self.csv_filename, encoding = 'latin-1')
+        countries = pd.read_csv(self.csv_filename, encoding = 'utf-8-sig')
 
         for idx, country in countries.iterrows():
             
@@ -135,11 +135,7 @@ class CoverageProcess:
                     print('Dissolving polygons')
                     coverage['dissolve'] = 1
                     coverage = coverage.dissolve(by = 'dissolve', aggfunc='sum')
-
                     coverage = coverage.to_crs({'init': 'epsg:3857'})
-
-                    print('Excluding small shapes')
-                    coverage['geometry'] = coverage.apply(clean_coverage, axis = 1)
 
                     print('Removing empty and null geometries')
                     coverage = coverage[~(coverage['geometry'].is_empty)]
@@ -166,7 +162,7 @@ class CoverageProcess:
         Function to process coverage of a single region 
         of an LMIC country.  
         """
-        countries = pd.read_csv(self.csv_filename, encoding = 'latin-1')
+        countries = pd.read_csv(self.csv_filename, encoding = 'utf-8-sig')
 
         iso3 = self.country_iso3
 
@@ -190,7 +186,7 @@ class CoverageProcess:
                 filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
                 gid_level = 'GID_{}'.format(gid_region)
 
-            folder = os.path.join('data','processed', iso3, 'regions')
+            folder = os.path.join('results', 'processed', iso3, 'regions')
             path_regions = os.path.join(folder, filename)
 
             regions = gpd.read_file(path_regions, crs = 'epsg:4326')
@@ -229,7 +225,7 @@ class CoverageProcess:
                     gdf_cov = gpd.overlay(gdf_cov, gdf_region, how = 'intersection')
 
                     filename = '{}.shp'.format(gid_id)
-                    folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'coverage', 'regions', tech)
+                    folder_out = os.path.join(DATA_PROCESSED, iso3, 'coverage', 'regions', tech)
 
                     if not os.path.exists(folder_out):
 

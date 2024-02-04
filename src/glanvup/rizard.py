@@ -39,7 +39,7 @@ class FloodProcess:
         Pre-process flood layers.
 
         """
-        countries = pd.read_csv(self.csv_filename, encoding = 'latin-1')
+        countries = pd.read_csv(self.csv_filename, encoding = 'utf-8-sig')
         
         for idx, country in countries.iterrows():
 
@@ -61,7 +61,7 @@ class FloodProcess:
                 filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
                 gid_level = 'GID_{}'.format(gid_region)
 
-            folder = os.path.join('data','processed', iso3, 'regions')
+            folder = os.path.join('results','processed', iso3, 'regions')
             
             path_regions = os.path.join(folder, filename)
             regions = gpd.read_file(path_regions, crs = 'epsg:4326')
@@ -90,7 +90,7 @@ class FloodProcess:
                                 'crs': 'epsg:4326'})
                 
                 filename_out = '{}.tif'.format(gid_id) 
-                folder_out = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
+                folder_out = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
 
                 if not os.path.exists(folder_out):
 
@@ -112,7 +112,7 @@ class FloodProcess:
         """
         This function process each of the tif files into shapefiles
         """
-        folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
+        folder = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
 
         for tifs in tqdm(os.listdir(folder), 
                          desc = 'Processing flooding shapefiles for {}...'.format(self.country_iso3)):
@@ -122,12 +122,12 @@ class FloodProcess:
 
                     tifs = os.path.splitext(tifs)[0]
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inunriver', 'tifs')
                     filename = tifs + '.tif'
                     
                     path_in = os.path.join(folder, filename)
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inunriver', 'shapefiles')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inunriver', 'shapefiles')
                     if not os.path.exists(folder):
                         
                         os.mkdir(folder)

@@ -14,7 +14,31 @@ CONFIG = configparser.ConfigParser()
 CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 DATA_RAW = os.path.join(BASE_PATH, 'raw')
-DATA_PROCESSED = os.path.join(BASE_PATH, 'processed')
+DATA_PROCESSED = os.path.join(BASE_PATH, '..', 'results', 'processed')
+
+############ CREATE FOLDERS THAT DO NOT EXIST ################
+if not os.path.exists(DATA_RAW):
+    
+    os.makedirs(DATA_RAW)
+
+boundary_folder = os.path.join(DATA_RAW, 'boundaries')
+
+if not os.path.exists(boundary_folder):
+    
+    os.makedirs(boundary_folder)
+
+pop_folder = os.path.join(DATA_RAW, 'WorldPop')
+
+if not os.path.exists(pop_folder):
+    
+    os.makedirs(pop_folder)
+
+poverty_data = os.path.join(DATA_RAW, 'poverty_data')
+
+if not os.path.exists(poverty_data):
+    
+    os.makedirs(poverty_data)
+
 
 def remove_small_shapes(x):
     """
@@ -102,7 +126,7 @@ class ProcessCountry:
             Dataframe containing all the country metadata.
 
         """
-        countries = pd.read_csv(self.csv_country, encoding = 'latin-1')
+        countries = pd.read_csv(self.csv_country, encoding = 'utf-8-sig')
 
         countries = countries[countries.Exclude == 0]
         
@@ -117,7 +141,7 @@ class ProcessCountry:
         and then process a national outline shapefile.
 
         """          
-        path = os.path.join('data', 'processed', self.country_iso3)
+        path = os.path.join('results', 'processed', self.country_iso3)
 
         if os.path.exists(os.path.join(path, 'national_outline.shp')):
 
@@ -145,7 +169,7 @@ class ProcessCountry:
             remove_small_shapes, axis = 1)
         
         glob_info_path = os.path.join(self.csv_country)
-        load_glob_info = pd.read_csv(glob_info_path, encoding = 'ISO-8859-1', 
+        load_glob_info = pd.read_csv(glob_info_path, encoding = 'utf-8-sig', 
                                      keep_default_na = False)
         
         single_country = single_country.merge(load_glob_info, left_on = 'GID_0', 
@@ -189,7 +213,7 @@ class ProcessRegions:
         for regional_level in range(1, int(self.gid_level) + 1): 
 
             filename = 'regions_{}_{}.shp'.format(regional_level, self.country_iso3)
-            folder = os.path.join('data', 'processed', self.country_iso3, 'regions')
+            folder = os.path.join('results', 'processed', self.country_iso3, 'regions')
             path_processed = os.path.join(folder, filename)
 
             if os.path.exists(path_processed):
@@ -203,7 +227,7 @@ class ProcessRegions:
                 os.mkdir(folder)
 
             filename = 'gadm36_{}.shp'.format(regional_level)
-            path_regions = os.path.join('data', 'raw', filename)
+            path_regions = os.path.join('data', 'raw', 'GADM', filename)
             regions = gpd.read_file(path_regions)
 
             regions = regions[regions.GID_0 == self.country_iso3]
@@ -297,7 +321,7 @@ class ProcessPopulation:
         hazard.crs.from_epsg(4326) 
 
         filename = 'national_outline.shp'
-        folder = os.path.join('data', 'processed', self.country_iso3)
+        folder = os.path.join('results', 'processed', self.country_iso3)
         
         #then load in our country as a geodataframe
         path_in = os.path.join(folder, filename)
@@ -323,7 +347,7 @@ class ProcessPopulation:
         
         #now we write out at the regional level
         filename_out = 'ppp_2020_1km_Aggregated.tif' #each regional file is named using the gid id
-        folder_out = os.path.join('data', 'processed', iso3, 'population', 'national')
+        folder_out = os.path.join('results', 'processed', iso3, 'population', 'national')
 
         if not os.path.exists(folder_out):
 
@@ -342,7 +366,7 @@ class ProcessPopulation:
         This function process each of the population 
         raster layers to vector shapefiles
         """
-        folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'national')
+        folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'national')
 
         for tifs in tqdm(os.listdir(folder), 
                          desc = 'Processing {} population shapefile'.format(self.country_iso3)):
@@ -352,12 +376,12 @@ class ProcessPopulation:
 
                     tifs = os.path.splitext(tifs)[0]
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'national')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'national')
                     filename = tifs + '.tif'
                     
                     path_in = os.path.join(folder, filename)
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'country_shapefile')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'country_shapefile')
                     if not os.path.exists(folder):
 
                         os.mkdir(folder)
@@ -418,7 +442,7 @@ class ProcessPopulation:
         population files created in process_national_population
         function.
         """
-        countries = pd.read_csv(self.csv_country, encoding = 'latin-1')
+        countries = pd.read_csv(self.csv_country, encoding = 'utf-8-sig')
         print('Working on {}'.format(self.country_iso3))
         
         for idx, country in countries.iterrows():
@@ -443,7 +467,7 @@ class ProcessPopulation:
 
                 filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
                 gid_level = 'GID_{}'.format(gid_region)
-            folder = os.path.join('data','processed', iso3, 'regions')
+            folder = os.path.join('results','processed', iso3, 'regions')
             
             #then load in our regions as a geodataframe
             path_regions = os.path.join(folder, filename)
@@ -456,7 +480,7 @@ class ProcessPopulation:
                 gid_id = region[gid_level]
                 
                 filename = 'ppp_2020_1km_Aggregated.tif'
-                folder = os.path.join('data','processed', iso3, 'population', 'national')
+                folder = os.path.join('results','processed', iso3, 'population', 'national')
                 path_pop = os.path.join(folder, filename)
                 hazard = rasterio.open(path_pop, 'r+')
                 hazard.nodata = 255                      
@@ -477,7 +501,7 @@ class ProcessPopulation:
                                 'crs': 'epsg:4326'})
 
                 filename_out = '{}.tif'.format(gid_id) 
-                folder_out = os.path.join('data', 'processed', self.country_iso3, 'population', 'tiffs')
+                folder_out = os.path.join('results', 'processed', self.country_iso3, 'population', 'tiffs')
 
                 if not os.path.exists(folder_out):
 
@@ -498,7 +522,7 @@ class ProcessPopulation:
         This function process each of the population 
         raster layers to vector shapefiles
         """
-        folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'tiffs')
+        folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'tiffs')
 
         for tifs in tqdm(os.listdir(folder), 
                          desc = 'Processing population shapefiles for {}...'.format(self.country_iso3)):
@@ -507,12 +531,12 @@ class ProcessPopulation:
 
                     tifs = os.path.splitext(tifs)[0]
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'tiffs')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'tiffs')
                     filename = tifs + '.tif'
                     
                     path_in = os.path.join(folder, filename)
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'population', 'shapefiles')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'shapefiles')
                     if not os.path.exists(folder):
 
                         os.mkdir(folder)
@@ -594,7 +618,7 @@ class PovertyProcess:
         """
         This function generates a national poverty shapefile.
         """
-        countries = pd.read_csv(self.csv_country, encoding = 'latin-1')
+        countries = pd.read_csv(self.csv_country, encoding = 'utf-8-sig')
         large_countries = ['ARG', 'BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
         
         for idx, country in countries.iterrows():
@@ -622,7 +646,7 @@ class PovertyProcess:
             world_gdf = gpd.read_file(poverty_file_in, crs = 'epsg:4326')
                 #set the filename depending our preferred regional level
 
-            region_folder = os.path.join('data', 'processed', iso3, 'regions')
+            region_folder = os.path.join('results', 'processed', iso3, 'regions')
             
             #Load region name
             region_file = os.path.join(region_folder, region_name)
@@ -631,7 +655,7 @@ class PovertyProcess:
             print('Pre-processing {} poverty data'.format(iso3))
             clipped_gdf = gpd.overlay(world_gdf, mask_gdf, how = 'intersection')
 
-            folder_out = os.path.join('data', 'processed', iso3, 'poverty', 'national')
+            folder_out = os.path.join('results', 'processed', iso3, 'poverty', 'national')
 
             if not os.path.exists(folder_out):
 
@@ -640,74 +664,5 @@ class PovertyProcess:
             path_out = os.path.join(folder_out, filename_out)
 
             clipped_gdf.to_file(path_out)
-
-        return None
-    
-
-    def process_regional_poverty(self):
-        """
-        Function to process poverty of a single region 
-        of an LMIC country.  
-        """
-        countries = pd.read_csv(self.csv_country, encoding = 'latin-1')
-
-        iso3 = self.country_iso3
-        print('Intersecting {} regional poverty datapoints'.format(iso3))
-        for idx, country in countries.iterrows():
-
-            if not country['iso3'] == iso3:
-
-                continue
-
-            iso3 = country['iso3']                 
-            gid_region = country['gid_region']
-            
-            large_countries = ['ARG', 'BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
-
-            if country['iso3'] in large_countries:
-                
-                filename = 'regions_1_{}.shp'.format(iso3)
-                poverty_filename = 'poverty_1_{}.shp'.format(iso3) 
-                gid_level = 'GID_1'
-
-            else:
-
-                filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
-                poverty_filename = 'poverty_{}_{}.shp'.format(gid_region, iso3) 
-                gid_level = 'GID_{}'.format(gid_region)
-
-            #Load regional shapefile
-            folder = os.path.join('data','processed', iso3, 'regions')
-            path_regions = os.path.join(folder, filename)
-            regions = gpd.read_file(path_regions, crs = 'epsg:4326')
-
-            print('Processing regional {} poverty data'.format(iso3))
-            #Load poverty shapefile
-            for idx, region in regions.iterrows():
-
-                gid_id = region[gid_level]
-                folder= os.path.join(DATA_PROCESSED, iso3 , 'poverty', 'national')
-                path_pov = os.path.join(folder, poverty_filename)
-
-                gdf_pov = gpd.read_file(path_pov, crs = 'EPSG:4326')
-                gdf_region = regions[regions[gid_level] == gid_id]
-
-                try:
-
-                    gdf_cov = gpd.overlay(gdf_region, gdf_pov, how = 'intersection')
-                
-                    filename = '{}.shp'.format(gid_id)
-                    folder_out = os.path.join(BASE_PATH, 'processed', iso3, 'poverty', 'regions')
-
-                    if not os.path.exists(folder_out):
-
-                        os.makedirs(folder_out)
-
-                    path_out = os.path.join(folder_out, filename)     
-                    gdf_cov.to_file(path_out, crs = 'EPSG:4326')
-
-                except: 
-
-                    pass
 
         return None

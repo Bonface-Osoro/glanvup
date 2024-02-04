@@ -4,8 +4,6 @@ import configparser
 import pandas as pd
 from glanvup.rizard import FloodProcess
 from glanvup.cozard import CoastProcess
-from glanvup.preprocessing import PovertyProcess
-from glanvup.coverage import CoverageProcess
 from glanvup.intersections import IntersectLayers
 from glanvup.continents import south_coast
 pd.options.mode.chained_assignment = None
@@ -25,13 +23,13 @@ coastal_folder = os.path.join(DATA_RAW, 'coastal_hazard')
 flood_files = os.listdir(flood_folder)
 coast_files = os.listdir(coastal_folder)
 
-countries = pd.read_csv(path, encoding = 'latin-1')
+countries = pd.read_csv(path, encoding = 'utf-8-sig')
 income_group = ['LIC', 'LMC', 'UMC']
 
-'''for idx, country in countries.iterrows():
+for idx, country in countries.iterrows():
 
-    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
-    #if not country['iso3'] == 'RUS':
+    #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+    if not country['iso3'] == 'KEN':
 
         continue 
     
@@ -40,32 +38,21 @@ income_group = ['LIC', 'LMC', 'UMC']
         try:
             flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
-            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
+            '''flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
             flooding.process_flood_tiff()
             flooding.process_flood_shapefile()
             
             intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
             intersection.pop_flood()
             intersection.vulri_intersect_all()
-            intersection.coverage_rizard()
-
-            #coverages = CoverageProcess(path, countries['iso3'].loc[idx])
-            #coverages.process_national_coverage()
-            #coverages.process_regional_coverage()
+            intersection.coverage_rizard()'''
 
         except:
 
-            pass'''
-        
-for idx, country in countries.iterrows():
-
-    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
-    #if not country['iso3'] == 'ARG':
-
-        continue
+            pass
 
     for file in coast_files:
-
+        
         try:
 
             coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
