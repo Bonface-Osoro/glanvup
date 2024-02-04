@@ -32,25 +32,25 @@ for idx, country in countries.iterrows():
         continue 
 
     country = ProcessCountry(path, countries['iso3'].loc[idx])
-    country.process_country_shapes()
+    #country.process_country_shapes()
 
     regions = ProcessRegions(countries['iso3'].loc[idx], countries['gid_region'].loc[idx])
-    regions.process_regions()
+    #regions.process_regions()
 
     populations = ProcessPopulation(path, countries['iso3'].loc[idx], countries['gid_region'].loc[idx], pop_tif_loc)
-    populations.process_national_population()
-    populations.process_regional_population()
-    region_shapefile = populations.pop_process_shapefiles()
-    populations.process_country_population()
+    #populations.process_national_population()
+    #populations.process_regional_population()
+    #region_shapefile = populations.pop_process_shapefiles()
+    #populations.process_country_population()
 
     poverty = PovertyProcess(path, countries['iso3'].loc[idx], countries['gid_region'].loc[idx], poverty_shp)
-    #poverty.country_poverty()
+    poverty.country_poverty()
 
     try:
 
         coverages = CoverageProcess(path, countries['iso3'].loc[idx])
-        #coverages.process_national_coverage()
-        #coverages.process_regional_coverage()
+        coverages.process_national_coverage()
+        coverages.process_regional_coverage()
 
     except:
 
