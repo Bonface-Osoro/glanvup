@@ -36,7 +36,7 @@ class CoastProcess:
         Pre-process flood layers.
 
         """
-        countries = pd.read_csv(self.csv_filename, encoding = 'latin-1')
+        countries = pd.read_csv(self.csv_filename, encoding = 'utf-8-sig')
         print('Working on {} coastal flooding layers'.format(self.country_iso3))
         
         for idx, country in countries.iterrows():
@@ -60,7 +60,7 @@ class CoastProcess:
                 filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
                 gid_level = 'GID_{}'.format(gid_region)
             filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
-            folder = os.path.join('data','processed', iso3, 'regions')
+            folder = os.path.join('results','processed', iso3, 'regions')
             
             #then load in our regions as a geodataframe
             path_regions = os.path.join(folder, filename)
@@ -100,7 +100,7 @@ class CoastProcess:
 
                 #now we write out at the regional level
                 filename_out = '{}.tif'.format(gid_id) 
-                folder_out = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'tifs')
+                folder_out = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'tifs')
 
                 if not os.path.exists(folder_out):
 
@@ -120,7 +120,7 @@ class CoastProcess:
         """
         This function process each of the tiff files into shapefiles
         """
-        folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'tifs')
+        folder = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'tifs')
 
         for tifs in tqdm(os.listdir(folder), 
                          desc = 'Processing flooding shapefiles for {}...'.format(self.country_iso3)):
@@ -130,12 +130,12 @@ class CoastProcess:
 
                     tifs = os.path.splitext(tifs)[0]
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'tifs')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'tifs')
                     filename = tifs + '.tif'
                     
                     path_in = os.path.join(folder, filename)
 
-                    folder = os.path.join('data', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'shapefiles')
+                    folder = os.path.join('results', 'processed', self.country_iso3, 'hazards', 'inuncoast', 'shapefiles')
                     if not os.path.exists(folder):
                         
                         os.mkdir(folder)
