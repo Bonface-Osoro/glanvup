@@ -402,7 +402,7 @@ class IntersectLayers:
     def coverage_rizard(self):
 
         intersection_2_folder = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_hazard')
-        coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'coverage', 'regions', self.cell_gen)
+        coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'uncovered', self.cell_gen)
         print('Intersecting {} {} with hazard layers'.format(self.country_iso3, self.cell_gen))
         for firstfile in os.listdir(intersection_2_folder):
             
@@ -422,7 +422,7 @@ class IntersectLayers:
 
                             if firstfile in secondfile:
 
-                                intersection = gpd.overlay(first_gdf, second_gdf, how = 'difference')
+                                intersection = gpd.overlay(first_gdf, second_gdf, how = 'intersection')
                                 
                                 region_part = str(firstfile)
                                 flood_part = str(self.flood_file).strip('.tif')
@@ -448,7 +448,7 @@ class IntersectLayers:
     def coverage_cozard(self):
 
         intersection_2_folder = os.path.join(DATA_RESULTS, self.country_iso3, 'pop_cozard')
-        coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'coverage', 'regions', self.cell_gen)
+        coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'uncovered', self.cell_gen)
         print('Intersecting {} {} with hazard layers'.format(self.country_iso3, self.cell_gen))
         for firstfile in os.listdir(intersection_2_folder):
             
@@ -468,7 +468,7 @@ class IntersectLayers:
 
                             if firstfile in secondfile:
 
-                                intersection = gpd.overlay(first_gdf, second_gdf, how = 'difference')
+                                intersection = gpd.overlay(first_gdf, second_gdf, how = 'intersection')
                                 
                                 region_part = str(firstfile)
                                 flood_part = str(self.flood_file).strip('.tif')

@@ -27,7 +27,7 @@ income_group = ['LIC', 'LMC', 'UMC']
 for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
-    #if not country['iso3'] == 'RUS':
+    #if not country['iso3'] == 'CAF':
         
         continue 
 
@@ -36,6 +36,7 @@ for idx, country in countries.iterrows():
 
     regions = ProcessRegions(countries['iso3'].loc[idx], countries['gid_region'].loc[idx])
     #regions.process_regions()
+    #regions.process_sub_region_boundaries()
 
     populations = ProcessPopulation(path, countries['iso3'].loc[idx], countries['gid_region'].loc[idx], pop_tif_loc)
     #populations.process_national_population()
@@ -44,14 +45,9 @@ for idx, country in countries.iterrows():
     #populations.process_country_population()
 
     poverty = PovertyProcess(path, countries['iso3'].loc[idx], countries['gid_region'].loc[idx], poverty_shp)
-    poverty.country_poverty()
+    #poverty.country_poverty()
 
-    try:
-
-        coverages = CoverageProcess(path, countries['iso3'].loc[idx])
-        coverages.process_national_coverage()
-        coverages.process_regional_coverage()
-
-    except:
-
-        print('4G data missing') 
+    coverages = CoverageProcess(path, countries['iso3'].loc[idx])
+    #coverages.process_national_coverage()
+    #coverages.process_regional_coverage()
+    coverages.uncovered_regions()
