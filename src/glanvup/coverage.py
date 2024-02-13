@@ -1,12 +1,9 @@
 import configparser
 import os 
-import rasterio
+import shutil
 import warnings
-import contextily as cx
 import geopandas as gpd   
-import matplotlib.pyplot as plt
-import pandas as pd       
-import seaborn as sns
+import pandas as pd     
 from rasterio.mask import mask
 from shapely.geometry import MultiPolygon
 from tqdm import tqdm
@@ -76,10 +73,12 @@ class CoverageProcess:
             Name of the country metadata file.
         country_iso3 : string
             Country iso3 to be processed.
+        cell_gen : string
+            Cellphone technology. It can only be 
+            'GSM', '3G' or '4G'.
         """
         self.csv_filename = csv_filename
         self.country_iso3 = country_iso3
-
 
     def process_national_coverage(self):
 
@@ -239,5 +238,91 @@ class CoverageProcess:
 
                     else:
                         gdf_cov.to_file(path_out, crs = 'EPSG:4326')
+                        
 
         return print('Regional coverage processing completed for {}'.format(iso3))
+    
+
+    def uncovered_regions(self):
+
+        technologies = ['GSM', '3G', '4G']
+
+        for tech in tqdm(technologies, desc = 'Processing shapefiles for uncovered areas in {}'.format(self.country_iso3)):
+
+            intersection_2_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'boundaries')
+            coverage_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'coverage', 'regions', tech)
+            print('Generating {} uncovered data for {}'.format(tech, self.country_iso3))
+
+            # Check if coverage_folder exists
+            if not os.path.exists(coverage_folder):
+                print('Coverage folder for {} not found. Assuming all region not covered by {}.'.format(tech, tech))
+                
+                # Create a new folder for storing shapefiles from intersection_2_folder
+                new_folder = os.path.join(DATA_PROCESSED, self.country_iso3, 'uncovered', tech)
+                os.makedirs(new_folder, exist_ok = True)
+
+                # Copy shapefiles from intersection_2_folder to the new folder
+                for file in os.listdir(intersection_2_folder):
+
+                    src = os.path.join(intersection_2_folder, file)
+                    dst = os.path.join(new_folder, file)
+
+                    if os.path.isdir(src):
+
+                        shutil.copytree(src, dst)
+
+                    else:
+
+                        shutil.copy(src, dst)
+                
+                continue  # Move to the next technology
+
+            for firstfile in os.listdir(intersection_2_folder):
+
+                if firstfile.endswith('.shp'):
+
+                    first_shapefile = os.path.join(intersection_2_folder, firstfile)
+                    first_gdf = gpd.read_file(first_shapefile)
+
+                    secondfile_found = False  # Check if matching coverage file found
+
+                    for secondfile in os.listdir(coverage_folder):
+
+                        if secondfile.endswith('.shp'):
+
+                            second_shapefile = os.path.join(coverage_folder, secondfile)
+                            second_gdf = gpd.read_file(second_shapefile)
+
+                            if firstfile in secondfile:
+
+                                secondfile_found = True
+                                intersection = gpd.overlay(first_gdf, second_gdf, how = 'symmetric_difference')
+                                
+                                region_part = str(firstfile)
+                                filename = '{}'.format(region_part)
+
+                                folder_out_3 = os.path.join(DATA_PROCESSED, self.country_iso3, 'uncovered', tech)
+
+                                if not os.path.exists(folder_out_3):
+
+                                    os.makedirs(folder_out_3)
+                                    
+                                path_out = os.path.join(folder_out_3, filename)
+                                intersection.to_file(path_out, driver = 'ESRI Shapefile')
+
+                    # If matching coverage file not found, save the first file as is
+                    if not secondfile_found:
+
+                        region_part = str(firstfile)
+                        filename = '{}'.format(region_part)
+
+                        folder_out_3 = os.path.join(DATA_PROCESSED, self.country_iso3, 'uncovered', tech)
+
+                        if not os.path.exists(folder_out_3):
+
+                            os.makedirs(folder_out_3)
+                            
+                        path_out = os.path.join(folder_out_3, filename)
+                        first_gdf.to_file(path_out, driver = 'ESRI Shapefile')
+
+        return None

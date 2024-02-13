@@ -28,30 +28,27 @@ income_group = ['LIC', 'LMC', 'UMC']
 
 for idx, country in countries.iterrows():
 
-    #if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
-    if not country['iso3'] == 'KEN':
+    if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
+    #if not country['iso3'] == 'RWA':
 
         continue 
     
     for file in flood_files:
 
-        try:
+        if not file.startswith('.DS_Store'):
+
             flood_tiff = os.path.join(DATA_RAW, 'flood_hazard', file)
 
-            '''flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
+            flooding = FloodProcess(path, countries['iso3'].loc[idx], flood_tiff)
             flooding.process_flood_tiff()
             flooding.process_flood_shapefile()
             
             intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
             intersection.pop_flood()
             intersection.vulri_intersect_all()
-            intersection.coverage_rizard()'''
+            intersection.coverage_rizard()
 
-        except:
-
-            pass
-
-    for file in coast_files:
+    '''for file in coast_files:
         
         try:
 
@@ -68,4 +65,4 @@ for idx, country in countries.iterrows():
 
         except:
 
-            pass
+            pass'''

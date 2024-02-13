@@ -252,16 +252,26 @@ class ProcessRegions:
     
     def process_sub_region_boundaries(self):
 
-        region_path = '../' 
-        countries = gpd.read_file(region_path)
+        region_path = os.path.join('results', 'processed', self.country_iso3, 'regions', 'regions_{}_{}.shp'.format(2, self.country_iso3)) 
+        region_path_2 = os.path.join('results', 'processed', self.country_iso3, 'regions', 'regions_{}_{}.shp'.format(1, self.country_iso3))
+        
+        if os.path.exists(region_path):
 
-        for index, row in tqdm(countries.iterrows(), desc = 'Processing sub-region boundaries'):
+            countries = gpd.read_file(region_path)
+            gid = 'GID_1'
+
+        else:
+
+            countries = gpd.read_file(region_path_2)
+            gid = 'GID_1'
+
+        for index, row in tqdm(countries.iterrows(), desc = 'Processing sub-region boundaries for {}'.format(self.country_iso3)):
 
             sub_region_shapefile = gpd.GeoDataFrame([row], crs = countries.crs)
 
-            filename = '{}.shp'.format(row['GID_1'])    
+            filename = '{}.shp'.format(row[gid])    
 
-            folder_out = os.path.join('data', 'processed', self.country_iso3, 'boundaries')
+            folder_out = os.path.join('results', 'processed', self.country_iso3, 'boundaries')
 
             if not os.path.exists(folder_out):
 
@@ -271,7 +281,7 @@ class ProcessRegions:
 
             sub_region_shapefile.to_file(path_out, driver = 'ESRI Shapefile')
 
-        return print('Sub-region boundary processed')
+        return None
 
 
 class ProcessPopulation:
