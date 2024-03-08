@@ -183,6 +183,7 @@ class IntersectLayers:
     
 
     def intersect_layers(self, folder_1, folder_2, folder_out):
+        
         print('Intersecting {} population with hazard layers.'.format(self.country_iso3))
         for firstfile in os.listdir(folder_1):
             

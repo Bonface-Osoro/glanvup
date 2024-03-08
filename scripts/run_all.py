@@ -30,10 +30,10 @@ for idx, country in countries.iterrows():
 
     if not country['income_group'] in income_group or country['gid_region'] == 0 or country['Exclude'] == 1:
     #if not country['iso3'] == 'RWA':
-
+  
         continue 
     
-    for file in flood_files:
+    '''for file in flood_files:
 
         if not file.startswith('.DS_Store'):
 
@@ -43,26 +43,23 @@ for idx, country in countries.iterrows():
             flooding.process_flood_tiff()
             flooding.process_flood_shapefile()
             
-            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
+            intersection = IntersectLayers(countries['iso3'].loc[idx], '4G', file)
             intersection.pop_flood()
             intersection.vulri_intersect_all()
-            intersection.coverage_rizard()
+            intersection.coverage_rizard()'''
 
-    '''for file in coast_files:
+    for file in coast_files:
         
-        try:
+        if not file.startswith('.DS_Store'):
 
             coastal_tiff = os.path.join(DATA_RAW, 'coastal_hazard', file)
 
             coastal = CoastProcess(path, countries['iso3'].loc[idx], coastal_tiff)
-            coastal.process_flood_tiff() 
-            coastal.process_flood_shapefile()
+            #coastal.process_flood_tiff() 
+            #coastal.process_flood_shapefile()
 
-            intersection = IntersectLayers(countries['iso3'].loc[idx], 'GSM', file)
-            intersection.pop_cozard()
-            intersection.vulco_intersect_all()
-            intersection.coverage_cozard()
-
-        except:
-
-            pass'''
+            intersection = IntersectLayers(countries['iso3'].loc[idx], '4G', file)
+            #intersection.pop_cozard()
+            #intersection.vulco_intersect_all()
+            #intersection.coverage_cozard()
+            intersection.pop_coverage()
