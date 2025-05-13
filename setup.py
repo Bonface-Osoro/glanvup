@@ -10,15 +10,15 @@ from setuptools import setup
 
 
 def readme():
-    """Read README contents
-    """
-    with open('README.md') as f:
+    
+    with open('README.md', encoding='utf-8') as f:
+
         return f.read()
 
 
 setup(
     name='glanvup',
-    use_scm_version=True,
+    version='0.1',
     license='MIT License',
     description='Global Assessment of Natural Hazards towards Vulnerable and Unconnected Population',
     long_description=readme(),

@@ -5,6 +5,7 @@ import rasterio
 import geopandas as gpd
 import pandas as pd
 from rasterio.mask import mask
+from rasterstats import zonal_stats
 from scipy.spatial import Voronoi
 from shapely.geometry import Polygon
 from shapely.geometry import MultiPolygon
@@ -15,6 +16,8 @@ CONFIG.read(os.path.join(os.path.dirname(__file__), 'script_config.ini'))
 BASE_PATH = CONFIG['file_locations']['base_path']
 DATA_RAW = os.path.join(BASE_PATH, 'raw')
 DATA_PROCESSED = os.path.join(BASE_PATH, '..', 'results', 'processed')
+DATA_RESULTS = os.path.join(BASE_PATH, '..', 'results', 'final')
+DATA_GLOBAL = os.path.join(BASE_PATH, '..', 'results', 'global')
 
 ############ CREATE FOLDERS THAT DO NOT EXIST ################
 if not os.path.exists(DATA_RAW):
@@ -322,7 +325,6 @@ class ProcessPopulation:
         """
 
         iso3 = self.country_iso3
-        gid_region = self.gid_region
 
         filename = self.pop_tiff
         path_pop = os.path.join(filename)
@@ -356,7 +358,7 @@ class ProcessPopulation:
                         'crs': 'epsg:4326'})
         
         #now we write out at the regional level
-        filename_out = 'ppp_2020_1km_Aggregated.tif' #each regional file is named using the gid id
+        filename_out = 'ppp_2020_1km_Aggregated.tif' 
         folder_out = os.path.join('results', 'processed', iso3, 'population', 'national')
 
         if not os.path.exists(folder_out):
@@ -371,80 +373,97 @@ class ProcessPopulation:
 
         return print('Population processing completed for {}'.format(iso3))
     
-    def process_country_population(self):
+
+    def process_population_tif(self):
         """
-        This function process each of the population 
-        raster layers to vector shapefiles
+        Process population layer.
+        
+        Parameters
+        ----------
+        data_name: string
+            Filename of the population raster layer
+        gid_level: string
+            GID boundary spatial level to process
+            
+        Returns
+        -------
+        output: dictionary.
+            Dictionary containing the country population and grid level
         """
-        folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'national')
+        gid_region = self.gid_region
+        iso = self.country_iso3
 
-        for tifs in tqdm(os.listdir(folder), 
-                         desc = 'Processing {} population shapefile'.format(self.country_iso3)):
-            try:
+        filename = 'regions_{}_{}.shp'.format(gid_region, iso)
+        path_regions = os.path.join('results', 'processed', iso, 'regions', filename)
+        rastername = 'ppp_2020_1km_Aggregated.tif'
+        path_raster = os.path.join('results', 'processed', iso, 'population', 'national', rastername)
 
-                if tifs.endswith('.tif'):
+        boundaries = gpd.read_file(path_regions, crs = 'epsg:4326')
 
-                    tifs = os.path.splitext(tifs)[0]
+        output = []
+        print('Working on {}'.format(iso))
+        for idx, boundary in boundaries.iterrows():
+    
+            with rasterio.open(path_raster) as src:
+                
+                affine = src.transform
+                array = src.read(1)
+                array[array <= 0] = 0
+                
+                population = [i['sum'] for i in zonal_stats(
+                    boundary['geometry'], array, nodata = 255,
+                    stats = ['sum'], affine = affine)][0]
 
-                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'national')
-                    filename = tifs + '.tif'
+                #Calculate the central coordinates of each of the polygons
+                boundary['centroid'] = boundary['geometry'].centroid
+                boundary['longitude'] = boundary['centroid'].x
+                boundary['latitude'] = boundary['centroid'].y
+
+                try:
+                    output.append({
+                        'iso3':boundary['GID_0'],
+                        'region':boundary['NAME_1'],
+                        'GID_1': boundary['GID_1'],
+                        'GID_2': boundary['GID_2'],
+                        'population': population,
+                        'latitude': boundary['latitude'],
+                        'longitude': boundary['longitude'],
+                        'geometry': boundary['geometry'],
+                        'area': boundary['geometry'].area * 12309
+                    })
                     
-                    path_in = os.path.join(folder, filename)
+                except:
 
-                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'country_shapefile')
-                    if not os.path.exists(folder):
+                    output.append({
+                        'iso3':boundary['GID_0'],
+                        'region':boundary['NAME_1'],
+                        'GID_1': boundary['GID_1'],
+                        'GID_2': boundary['GID_1'],
+                        'population': population,
+                        'latitude': boundary['latitude'],
+                        'longitude': boundary['longitude'],
+                        'geometry': boundary['geometry'],
+                        'area': boundary['geometry'].area * 12309
+                    })
 
-                        os.mkdir(folder)
-                        
-                    filename = self.country_iso3 + '.shp'
-                    path_out = os.path.join(folder, filename)
+        df = pd.DataFrame(output)
+        df.dropna(subset = ['population'], inplace = True)
+        df['population'] = df['population'].astype(int)
+        df[['latitude', 'longitude']] = df[['latitude', 'longitude']].round(4)
 
-                    with rasterio.open(path_in) as src:
+        fileout = '{}_population_results.csv'.format(iso)
+        folder_out = os.path.join('results', 'final', iso, 'population')
+        if not os.path.exists(folder_out):
 
-                        affine = src.transform
-                        array = src.read(1)
+            os.makedirs(folder_out)
 
-                        output = []
+        path_out = os.path.join(folder_out, fileout)
+        df.to_csv(path_out, index = False)
 
-                        for vec in rasterio.features.shapes(array):
-
-                            if vec[1] > 0 and not vec[1] == 255:
-
-                                coordinates = [i for i in vec[0]['coordinates'][0]]
-
-                                coords = []
-
-                                for i in coordinates:
-
-                                    x = i[0]
-                                    y = i[1]
-
-                                    x2, y2 = src.transform * (x, y)
-
-                                    coords.append((x2, y2))
-
-                                output.append({
-                                    'type': vec[0]['type'],
-                                    'geometry': {
-                                        'type': 'Polygon',
-                                        'coordinates': [coords],
-                                    },
-                                    'properties': {
-                                        'value': vec[1],
-                                    }
-                                })
-
-                    output = gpd.GeoDataFrame.from_features(output, crs = 'epsg:4326')
-                    output.to_file(path_out, driver = 'ESRI Shapefile')
-
-            except:
-
-                pass
-
-        return None
+        return output
 
 
-    def process_regional_population(self):
+    def process_sub_regional_pop_tiff(self):
         """
         This function creates a regional composite population .tiff 
         using regional boundary files created in 
@@ -463,34 +482,36 @@ class ProcessPopulation:
             
             #define our country-specific parameters, including gid information
             iso3 = country['iso3']
-            gid_region = country['gid_region']
-            gid_level = 'GID_{}'.format(gid_region)
             
             #set the filename depending our preferred regional level
-            large_countries = ['ARG', 'BRA', 'CHN', 'USA', 'DZA', 'IND', 'RUS']
-            if country['iso3'] in large_countries:
-                
-                filename = 'regions_1_{}.shp'.format(iso3)
-                gid_level = 'GID_1'
+            region_path = os.path.join('results', 'processed', 
+                          self.country_iso3, 'regions', 
+                          'regions_{}_{}.shp'.format(2, 
+                          self.country_iso3)) 
+            
+            region_path_2 = os.path.join('results', 'processed', 
+                            self.country_iso3, 'regions', 
+                            'regions_{}_{}.shp'.format(1, 
+                            self.country_iso3))
+            
+            if os.path.exists(region_path):
+
+                regions = gpd.read_file(region_path)
+                gid = 'GID_2'
 
             else:
 
-                filename = 'regions_{}_{}.shp'.format(gid_region, iso3)
-                gid_level = 'GID_{}'.format(gid_region)
-            folder = os.path.join('results','processed', iso3, 'regions')
-            
-            #then load in our regions as a geodataframe
-            path_regions = os.path.join(folder, filename)
-            regions = gpd.read_file(path_regions, crs = 'epsg:4326')#[:2]
+                regions = gpd.read_file(region_path_2)
+                gid = 'GID_1'
             
             for idx, region in regions.iterrows():
 
                 #get our gid id for this region 
                 #(which depends on the country-specific gid level)
-                gid_id = region[gid_level]
-                
+                gid_id = region[gid]
+
                 filename = 'ppp_2020_1km_Aggregated.tif'
-                folder = os.path.join('results','processed', iso3, 'population', 'national')
+                folder = os.path.join('results', 'processed', iso3, 'population', 'national')
                 path_pop = os.path.join(folder, filename)
                 hazard = rasterio.open(path_pop, 'r+')
                 hazard.nodata = 255                      
@@ -499,6 +520,7 @@ class ProcessPopulation:
                 geo = gpd.GeoDataFrame(gpd.GeoSeries(region.geometry))
 
                 geo = geo.rename(columns = {0:'geometry'}).set_geometry('geometry')
+
 
                 coords = [json.loads(geo.to_json())['features'][0]['geometry']] 
 
@@ -535,18 +557,25 @@ class ProcessPopulation:
         folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'tiffs')
 
         for tifs in tqdm(os.listdir(folder), 
-                         desc = 'Processing population shapefiles for {}...'.format(self.country_iso3)):
+                         desc = 'Processing sub-regional population shapefiles for {}...'.format(
+                        self.country_iso3)):
             try:
+
                 if tifs.endswith('.tif'):
 
                     tifs = os.path.splitext(tifs)[0]
 
-                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'tiffs')
+                    folder = os.path.join('results', 'processed', 
+                             self.country_iso3, 'population', 'tiffs')
                     filename = tifs + '.tif'
+                    gid_name = os.path.basename(filename)
+                    gid_name = gid_name.rsplit(".", 1)[0]
                     
                     path_in = os.path.join(folder, filename)
 
-                    folder = os.path.join('results', 'processed', self.country_iso3, 'population', 'shapefiles')
+                    folder = os.path.join('results', 'processed', 
+                             self.country_iso3, 'population', 'shapefiles')
+                    
                     if not os.path.exists(folder):
 
                         os.mkdir(folder)
@@ -585,6 +614,7 @@ class ProcessPopulation:
                                         'coordinates': [coords],
                                     },
                                     'properties': {
+                                        'GID_1': gid_name,
                                         'value': vec[1],
                                     }
                                 })
@@ -593,6 +623,7 @@ class ProcessPopulation:
                     output.to_file(path_out, driver = 'ESRI Shapefile')
 
             except:
+
                 pass
 
         return None
@@ -676,3 +707,94 @@ class PovertyProcess:
             clipped_gdf.to_file(path_out)
 
         return None
+    
+
+def csv_merger():
+    """
+    This funcion read and merge multiple CSV files located in different folders.
+
+    """
+    isos = os.listdir(DATA_RESULTS)
+
+    merged_data = pd.DataFrame()
+    merged_data_1 = pd.DataFrame()
+
+    for iso3 in isos:
+
+        print('Merging csv files for {}'.format(iso3))
+        base_directory = os.path.join(DATA_RESULTS, iso3, 'population') 
+        
+        for root, _, files in os.walk(base_directory):
+
+            for file in files:
+
+                file_path = os.path.join(base_directory, file)
+                df = pd.read_csv(file_path)
+                df['pop_density_sqkm'] = df['population'] / df['area']
+                df = df.sort_values(by = 'pop_density_sqkm', ascending = True)
+                df['decile_value'] = pd.qcut(df['pop_density_sqkm'], 10, labels = False) + 1
+
+                merged_data = pd.concat([merged_data, df], ignore_index = 
+                            True)
+                
+                df1 = pd.read_csv(file_path)
+                df1 = df1.drop(columns = ['region', 'GID_2', 'latitude', 'longitude', 'geometry'])
+                df1 = df1.groupby(['iso3', 'GID_1']).agg({'population': 
+                                        'sum', 'area': 'sum'}).reset_index()
+                df1['pop_density_sqkm'] = df1['population'] / df1['area']
+                df1 = df1.sort_values(by = 'pop_density_sqkm', ascending = True)
+                df1['decile_value'] = pd.qcut(df1['pop_density_sqkm'], 10, labels = False) + 1
+                merged_data_1 = pd.concat([merged_data_1, df1], ignore_index = True)
+
+        fileout = 'global_2_population{}'.format('.csv')
+        fileout_1 = 'global_1_population{}'.format('.csv')
+        folder_out = os.path.join(DATA_RESULTS, '..', 'global')
+
+        if not os.path.exists(folder_out):
+
+            os.makedirs(folder_out)
+
+        path_out = os.path.join(folder_out, fileout)
+        path_out_2 = os.path.join(folder_out, fileout_1)
+        merged_data.to_csv(path_out, index = False)
+        merged_data_1.to_csv(path_out_2, index = False)
+
+
+    return None
+
+
+def combine_region_boundaries():
+    """
+    This function exclusively combines regional boundary shapefiles of an 
+    individual country into a single one.
+    """
+    isos = os.listdir(DATA_PROCESSED)
+    combined_gdf = gpd.GeoDataFrame()
+    
+    for iso3 in isos:
+
+        print('Combining data for {}'.format(iso3))
+        shapefile_path = os.path.join(DATA_PROCESSED, iso3, 'regions')
+
+        for root, _, files in os.walk(shapefile_path):
+
+            for file in files:
+
+                if file.endswith('_1_{}.shp'.format(iso3)):
+
+                    file_path = os.path.join(root, file)
+                    gdf = gpd.read_file(file_path)
+                    combined_gdf = pd.concat([combined_gdf, gdf], 
+                                                ignore_index = True) 
+                    
+                    fileout = 'global_region_1_boundaries.shp'
+                    folder_out = os.path.join(DATA_GLOBAL, 'shapefiles')
+                    if not os.path.exists(folder_out):
+
+                        os.makedirs(folder_out)
+
+                    path_out = os.path.join(folder_out, fileout)
+                    combined_gdf.to_file(path_out, index = False)
+
+
+    return None
